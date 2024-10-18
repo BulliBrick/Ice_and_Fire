@@ -12,6 +12,7 @@ import com.github.alexthe666.iceandfire.entity.util.IVillagerFear;
 import com.github.alexthe666.iceandfire.item.IafItemRegistry;
 import com.google.common.base.Predicate;
 
+import net.minecraft.client.renderer.model.Variant;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
@@ -32,6 +33,9 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.DifficultyInstance;
@@ -42,6 +46,8 @@ import net.minecraft.world.server.ServerBossInfo;
 public class EntityDreadQueen extends EntityDreadMob implements IAnimatedEntity, IVillagerFear, IAnimalFear {
 
     public static Animation ANIMATION_SPAWN = Animation.create(40);
+    private static final DataParameter<Integer> VARIANT = EntityDataManager.createKey(EntityDreadQueen.class, DataSerializers.VARINT);
+
     private final ServerBossInfo bossInfo = (new ServerBossInfo(this.getDisplayName(), BossInfo.Color.BLUE, BossInfo.Overlay.PROGRESS));
     private int animationTick;
     private Animation currentAnimation;
@@ -76,15 +82,20 @@ public class EntityDreadQueen extends EntityDreadMob implements IAnimatedEntity,
                 //HEALTH
                 .createMutableAttribute(Attributes.MAX_HEALTH, IafConfig.dreadQueenMaxHealth)
                 //SPEED
-                .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.3D)
+                .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.15D)
                 //ATTACK
-                .createMutableAttribute(Attributes.ATTACK_DAMAGE, 5.0D)
+                .createMutableAttribute(Attributes.ATTACK_DAMAGE, 5D)
                 //FOLLOW RANGE
                 .createMutableAttribute(Attributes.FOLLOW_RANGE, 256.0D)
                 //ARMOR
-                .createMutableAttribute(Attributes.ARMOR, 30.0D);
+                .createMutableAttribute(Attributes.ARMOR, 25.0D);
     }
 
+    @Override
+    protected void registerData() {
+        super.registerData();
+        this.dataManager.register(VARIANT, Integer.valueOf(0));
+    }
     public void readAdditional(CompoundNBT compound) {
         super.readAdditional(compound);
 

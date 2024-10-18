@@ -91,6 +91,7 @@ public class IafEntityRegistry {
     public static final EntityType<EntityDreadLich> DREAD_LICH = registerEntityOld(EntityType.Builder.create(EntityDreadLich::new, EntityClassification.MONSTER).size(0.6F, 1.8F), "dread_lich");
     public static final EntityType<EntityDreadKnight> DREAD_KNIGHT = registerEntityOld(EntityType.Builder.create(EntityDreadKnight::new, EntityClassification.MONSTER).size(0.6F, 1.8F), "dread_knight");
     public static final EntityType<EntityDreadHorse> DREAD_HORSE = registerEntityOld(EntityType.Builder.create(EntityDreadHorse::new, EntityClassification.MONSTER).size(1.3964844F, 1.6F), "dread_horse");
+    public static final EntityType<EntityDreadQueen> DREAD_QUEEN = registerEntityOld(EntityType.Builder.create(EntityDreadQueen::new, EntityClassification.MONSTER).size(0.6F, 1.8F), "dread_queen");
 
     private static <T extends Entity> EntityType<T> registerEntityOld(EntityType.Builder<T> builder, String entityName) {
         ResourceLocation nameLoc = new ResourceLocation(IceAndFire.MODID, entityName);
@@ -121,6 +122,7 @@ public class IafEntityRegistry {
         event.getRegistry().register(DREAD_LICH);
         event.getRegistry().register(DREAD_KNIGHT);
         event.getRegistry().register(DREAD_HORSE);
+        event.getRegistry().register(DREAD_QUEEN);
 
 
     }
@@ -159,6 +161,7 @@ public class IafEntityRegistry {
         creationEvent.put(DREAD_GHOUL, EntityDreadGhoul.bakeAttributes().create());
         creationEvent.put(DREAD_KNIGHT, EntityDreadKnight.bakeAttributes().create());
         creationEvent.put(DREAD_SCUTTLER, EntityDreadScuttler.bakeAttributes().create());
+        creationEvent.put(DREAD_QUEEN, EntityDreadQueen.bakeAttributes().create());
         creationEvent.put(HYDRA, EntityHydra.bakeAttributes().create());
         creationEvent.put(GHOST, EntityGhost.bakeAttributes().create());
     }

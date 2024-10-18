@@ -13,6 +13,8 @@ import com.github.alexthe666.iceandfire.message.*;
 import com.github.alexthe666.iceandfire.recipe.IafRecipeRegistry;
 import com.github.alexthe666.iceandfire.world.IafProcessors;
 import com.github.alexthe666.iceandfire.world.IafWorldRegistry;
+import com.github.alexthe666.iceandfire.world.biome.BiomeDreadLands;
+import com.github.alexthe666.iceandfire.world.gen.BiomeDreadLandsGeneration;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -99,6 +101,7 @@ public class IceAndFire {
         IafWorldRegistry.STRUCTURES.register(modBus);
         IafWorldRegistry.FEATURES.register(modBus);
         IafRecipeRegistry.SERIALIZERS.register(modBus);
+        BiomeDreadLands.BIOMES.register(modBus);
         modBus.addListener(this::setup);
         modBus.addListener(this::setupComplete);
         modBus.addGenericListener(Structure.class, EventPriority.LOW,
@@ -164,6 +167,8 @@ public class IceAndFire {
             IafWorldRegistry.setup();
             IafVillagerRegistry.setup();
             IafLootRegistry.init();
+
+            BiomeDreadLandsGeneration.generateBiomes();
         });
     }
 

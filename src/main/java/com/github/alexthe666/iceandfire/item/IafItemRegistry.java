@@ -56,7 +56,7 @@ public class IafItemRegistry {
     public static CustomToolMaterial HIPPOCAMPUS_SWORD_TOOL_MATERIAL = new CustomToolMaterial("HippocampusSword", 0, 500, -2F, 0F, 50);
     public static CustomToolMaterial DREAD_SWORD_TOOL_MATERIAL = new CustomToolMaterial("DreadSword", 0, 100, 1F, 10F, 0);
     public static CustomToolMaterial DREAD_KNIGHT_TOOL_MATERIAL = new CustomToolMaterial("DreadKnightSword", 0, 1200, 13F, 0F, 10);
-    public static CustomToolMaterial DREAD_QUEEN_SWORD_TOOL_MATERIAL = new DragonsteelToolMaterial("DreadQueenSword", 0, IafConfig.dragonsteelBaseDurability, (float) IafConfig.dragonsteelBaseDamage, 10F, 10);
+    public static CustomToolMaterial DREAD_QUEEN_SWORD_TOOL_MATERIAL = new DragonsteelToolMaterial("DreadQueenSword", 0, IafConfig.dragonsteelBaseDurability, (float) IafConfig.dragonsteelBaseDamage + 5F, 10F, 10);
     public static CustomToolMaterial GHOST_SWORD_TOOL_MATERIAL = new CustomToolMaterial("GhostSword", 2, 3000, 5, 10.0F, 25);
 
     public static final Item BESTIARY = new ItemBestiary();
@@ -422,6 +422,7 @@ public class IafItemRegistry {
         event.getRegistry().register(new ForgeSpawnEggItem(() -> IafEntityRegistry.DREAD_LICH, 0XE0E6E6, 0X274860, new Item.Properties().group(IceAndFire.TAB_ITEMS)).setRegistryName("iceandfire:spawn_egg_lich"));
         event.getRegistry().register(new ForgeSpawnEggItem(() -> IafEntityRegistry.DREAD_KNIGHT, 0XE0E6E6, 0X4A6C6E, new Item.Properties().group(IceAndFire.TAB_ITEMS)).setRegistryName("iceandfire:spawn_egg_dread_knight"));
         event.getRegistry().register(new ForgeSpawnEggItem(() -> IafEntityRegistry.DREAD_HORSE, 0XE0E6E6, 0XACACAC, new Item.Properties().group(IceAndFire.TAB_ITEMS)).setRegistryName("iceandfire:spawn_egg_dread_horse"));
+        event.getRegistry().register(new ForgeSpawnEggItem(() -> IafEntityRegistry.DREAD_QUEEN, 0XE0E6E6, 0X4A6C6A, new Item.Properties().group(IceAndFire.TAB_ITEMS)).setRegistryName("iceandfire:spwan_egg_dread_queen"));
         event.getRegistry().register(new ForgeSpawnEggItem(() -> IafEntityRegistry.HYDRA, 0X8B8B78, 0X2E372B, new Item.Properties().group(IceAndFire.TAB_ITEMS)).setRegistryName("iceandfire:spawn_egg_hydra"));
         event.getRegistry().register(new ForgeSpawnEggItem(() -> IafEntityRegistry.GHOST, 0XB9EDB8, 0X73B276, new Item.Properties().group(IceAndFire.TAB_ITEMS)).setRegistryName("iceandfire:spawn_egg_ghost"));
     }
