@@ -102,6 +102,7 @@ public class IceAndFire {
         IafWorldRegistry.FEATURES.register(modBus);
         IafRecipeRegistry.SERIALIZERS.register(modBus);
         BiomeDreadLands.BIOMES.register(modBus);
+        
         modBus.addListener(this::setup);
         modBus.addListener(this::setupComplete);
         modBus.addGenericListener(Structure.class, EventPriority.LOW,

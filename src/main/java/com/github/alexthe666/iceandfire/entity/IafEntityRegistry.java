@@ -72,7 +72,7 @@ public class IafEntityRegistry {
     public static final RegistryObject<EntityType<EntityHydraBreath>> HYDRA_BREATH = registerEntity(EntityType.Builder.<EntityHydraBreath>create(EntityHydraBreath::new, EntityClassification.MISC).size(0.9F, 0.9F).setCustomClientFactory(EntityHydraBreath::new), "hydra_breath");
     public static final RegistryObject<EntityType<EntityHydraArrow>> HYDRA_ARROW = registerEntity(EntityType.Builder.<EntityHydraArrow>create(EntityHydraArrow::new, EntityClassification.MISC).size(0.5F, 0.5F).setCustomClientFactory(EntityHydraArrow::new), "hydra_arrow");
     public static final RegistryObject<EntityType<EntityDreadLichSkull>> DREAD_LICH_SKULL = registerEntity(EntityType.Builder.<EntityDreadLichSkull>create(EntityDreadLichSkull::new, EntityClassification.MISC).size(0.5F, 0.5F).setCustomClientFactory(EntityDreadLichSkull::new), "dread_lich_skull");
-public static final RegistryObject<EntityType<EntityDreadQueenSkull>> DREAD_QUEEN_SKULL = registerEntity(EntityType.Builder.<EntityDreadQueenSkull>create(EntityDreadQueenSkull::new, EntityClassification.MISC).size(0.7F, 0.7F).setCustomClientFactory(EntityDreadQueenSkull::new), "dread_queen_skull");
+    public static final RegistryObject<EntityType<EntityDreadQueenSkull>> DREAD_QUEEN_SKULL = registerEntity(EntityType.Builder.<EntityDreadQueenSkull>create(EntityDreadQueenSkull::new, EntityClassification.MISC).size(0.7F, 0.7F).setCustomClientFactory(EntityDreadQueenSkull::new), "dread_queen_skull");
 
 
     //ALLTHEMODIUM COMPAT

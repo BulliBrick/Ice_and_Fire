@@ -422,7 +422,7 @@ public class IafItemRegistry {
         event.getRegistry().register(new ForgeSpawnEggItem(() -> IafEntityRegistry.DREAD_LICH, 0XE0E6E6, 0X274860, new Item.Properties().group(IceAndFire.TAB_ITEMS)).setRegistryName("iceandfire:spawn_egg_lich"));
         event.getRegistry().register(new ForgeSpawnEggItem(() -> IafEntityRegistry.DREAD_KNIGHT, 0XE0E6E6, 0X4A6C6E, new Item.Properties().group(IceAndFire.TAB_ITEMS)).setRegistryName("iceandfire:spawn_egg_dread_knight"));
         event.getRegistry().register(new ForgeSpawnEggItem(() -> IafEntityRegistry.DREAD_HORSE, 0XE0E6E6, 0XACACAC, new Item.Properties().group(IceAndFire.TAB_ITEMS)).setRegistryName("iceandfire:spawn_egg_dread_horse"));
-        event.getRegistry().register(new ForgeSpawnEggItem(() -> IafEntityRegistry.DREAD_QUEEN, 0XE0E6E6, 0X4A6C6A, new Item.Properties().group(IceAndFire.TAB_ITEMS)).setRegistryName("iceandfire:spwan_egg_dread_queen"));
+        event.getRegistry().register(new ForgeSpawnEggItem(() -> IafEntityRegistry.DREAD_QUEEN, 0XE0E6E6, 0XACACAC, new Item.Properties().group(IceAndFire.TAB_ITEMS)).setRegistryName("iceandfire:spawn_egg_dread_queen"));
         event.getRegistry().register(new ForgeSpawnEggItem(() -> IafEntityRegistry.HYDRA, 0X8B8B78, 0X2E372B, new Item.Properties().group(IceAndFire.TAB_ITEMS)).setRegistryName("iceandfire:spawn_egg_hydra"));
         event.getRegistry().register(new ForgeSpawnEggItem(() -> IafEntityRegistry.GHOST, 0XB9EDB8, 0X73B276, new Item.Properties().group(IceAndFire.TAB_ITEMS)).setRegistryName("iceandfire:spawn_egg_ghost"));
     }
