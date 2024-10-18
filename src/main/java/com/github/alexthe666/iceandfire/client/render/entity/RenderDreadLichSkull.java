@@ -19,8 +19,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
 
-import java.util.HashMap;
-import java.util.Map;
 
 public class RenderDreadLichSkull extends EntityRenderer<EntityDreadLichSkull> {
 

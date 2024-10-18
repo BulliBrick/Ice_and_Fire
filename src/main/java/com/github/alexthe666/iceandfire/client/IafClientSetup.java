@@ -111,6 +111,7 @@ public class IafClientSetup {
         RenderingRegistry.registerEntityRenderingHandler(IafEntityRegistry.DREAD_KNIGHT, manager -> new RenderDreadKnight(manager));
         RenderingRegistry.registerEntityRenderingHandler(IafEntityRegistry.DREAD_HORSE, manager -> new RenderDreadHorse(manager));
         RenderingRegistry.registerEntityRenderingHandler(IafEntityRegistry.DREAD_QUEEN, manager -> new RenderDreadQueen(manager));
+        RenderingRegistry.registerEntityRenderingHandler(IafEntityRegistry.DREAD_QUEEN_SKULL.get(), manager -> new RenderDreadQueenSkull());
         RenderingRegistry.registerEntityRenderingHandler(IafEntityRegistry.HYDRA, manager -> new RenderHydra(manager));
         RenderingRegistry.registerEntityRenderingHandler(IafEntityRegistry.HYDRA_BREATH.get(), manager -> new RenderNothing(manager));
         RenderingRegistry.registerEntityRenderingHandler(IafEntityRegistry.HYDRA_ARROW.get(), manager -> new RenderHydraArrow(manager));
