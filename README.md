@@ -25,3 +25,8 @@ We have an official Ice and Fire [discord community](https://discord.gg/WfumvTg)
 # FAQ
 Please take a look at the wiki pages on [fandom](https://ice-and-fire-mod.fandom.com/wiki/Frequently_asked_questions) and [github](https://github.com/Alex-the-666/Ice_and_Fire/wiki)
 
+## Functionalitys to be added 
+- Implementing Dread Queen
+- Implementing Black Frost
+- Creating everythingaround Dread Queen which is missing
+
