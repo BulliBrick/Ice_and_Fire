@@ -425,6 +425,8 @@ public class IafItemRegistry {
         event.getRegistry().register(new ForgeSpawnEggItem(() -> IafEntityRegistry.DREAD_QUEEN, 0XE0E6E6, 0XACACAC, new Item.Properties().group(IceAndFire.TAB_ITEMS)).setRegistryName("iceandfire:spawn_egg_dread_queen"));
         event.getRegistry().register(new ForgeSpawnEggItem(() -> IafEntityRegistry.HYDRA, 0X8B8B78, 0X2E372B, new Item.Properties().group(IceAndFire.TAB_ITEMS)).setRegistryName("iceandfire:spawn_egg_hydra"));
         event.getRegistry().register(new ForgeSpawnEggItem(() -> IafEntityRegistry.GHOST, 0XB9EDB8, 0X73B276, new Item.Properties().group(IceAndFire.TAB_ITEMS)).setRegistryName("iceandfire:spawn_egg_ghost"));
+        event.getRegistry().register(new ForgeSpawnEggItem(IafEntityRegistry.BLACK_FROST, 0XB5DDFB, 0X7EBAF01, new Item.Properties().group(IceAndFire.TAB_ITEMS)).setRegistryName("iceandfire:spawn_egg_black_frost"));
+
     }
 
 

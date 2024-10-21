@@ -112,6 +112,8 @@ public class IafClientSetup {
         RenderingRegistry.registerEntityRenderingHandler(IafEntityRegistry.DREAD_HORSE, manager -> new RenderDreadHorse(manager));
         RenderingRegistry.registerEntityRenderingHandler(IafEntityRegistry.DREAD_QUEEN, manager -> new RenderDreadQueen(manager));
         RenderingRegistry.registerEntityRenderingHandler(IafEntityRegistry.DREAD_QUEEN_SKULL.get(), manager -> new RenderDreadQueenSkull());
+        //needs to be adapted to black frost
+        RenderingRegistry.registerEntityRenderingHandler(IafEntityRegistry.BLACK_FROST.get(), manager -> new RenderDragonBase(manager, ICE_DRAGON_BASE_MODEL, 1));
         RenderingRegistry.registerEntityRenderingHandler(IafEntityRegistry.HYDRA, manager -> new RenderHydra(manager));
         RenderingRegistry.registerEntityRenderingHandler(IafEntityRegistry.HYDRA_BREATH.get(), manager -> new RenderNothing(manager));
         RenderingRegistry.registerEntityRenderingHandler(IafEntityRegistry.HYDRA_ARROW.get(), manager -> new RenderHydraArrow(manager));

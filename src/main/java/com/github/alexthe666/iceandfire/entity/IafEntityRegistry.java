@@ -38,9 +38,9 @@ public class IafEntityRegistry {
     public static final RegistryObject<EntityType<EntityDragonArrow>> DRAGON_ARROW = registerEntity(EntityType.Builder.<EntityDragonArrow>create(EntityDragonArrow::new, EntityClassification.MISC).size(0.5F, 0.5F).setCustomClientFactory(EntityDragonArrow::new), "dragon_arrow");
     public static final RegistryObject<EntityType<EntityDragonSkull>> DRAGON_SKULL = registerEntity(EntityType.Builder.create(EntityDragonSkull::new, EntityClassification.MISC).size(0.9F, 0.65F), "dragon_skull");
     public static final RegistryObject<EntityType<EntityFireDragon>> FIRE_DRAGON = registerEntity(EntityType.Builder.<EntityFireDragon>create(EntityFireDragon::new, EntityClassification.CREATURE).size(0.78F, 1.2F).immuneToFire().setTrackingRange(256), "fire_dragon");
-    public static final RegistryObject<EntityType<EntityIceDragon>> ICE_DRAGON = registerEntity(EntityType.Builder.<EntityIceDragon>create(EntityIceDragon::new, EntityClassification.CREATURE).size(0.78F, 1.2F).setTrackingRange(256), "ice_dragon");
     public static final RegistryObject<EntityType<EntityLightningDragon>> LIGHTNING_DRAGON = registerEntity(EntityType.Builder.<EntityLightningDragon>create(EntityLightningDragon::new, EntityClassification.CREATURE).size(0.78F, 1.2F).setTrackingRange(256), "lightning_dragon");
     public static final RegistryObject<EntityType<EntityDragonFireCharge>> FIRE_DRAGON_CHARGE = registerEntity(EntityType.Builder.<EntityDragonFireCharge>create(EntityDragonFireCharge::new, EntityClassification.MISC).size(0.9F, 0.9F).setCustomClientFactory(EntityDragonFireCharge::new), "fire_dragon_charge");
+    public static final RegistryObject<EntityType<EntityIceDragon>> ICE_DRAGON = registerEntity(EntityType.Builder.<EntityIceDragon>create(EntityIceDragon::new, EntityClassification.CREATURE).size(0.78F, 1.2F).setTrackingRange(256), "ice_dragon");
     public static final RegistryObject<EntityType<EntityDragonIceCharge>> ICE_DRAGON_CHARGE = registerEntity(EntityType.Builder.<EntityDragonIceCharge>create(EntityDragonIceCharge::new, EntityClassification.MISC).size(0.9F, 0.9F).setCustomClientFactory(EntityDragonIceCharge::new), "ice_dragon_charge");
     public static final RegistryObject<EntityType<EntityDragonLightningCharge>> LIGHTNING_DRAGON_CHARGE = registerEntity(EntityType.Builder.<EntityDragonLightningCharge>create(EntityDragonLightningCharge::new, EntityClassification.MISC).size(0.9F, 0.9F).setCustomClientFactory(EntityDragonLightningCharge::new), "lightning_dragon_charge");
     public static final RegistryObject<EntityType<EntityHippogryphEgg>> HIPPOGRYPH_EGG = registerEntity(EntityType.Builder.<EntityHippogryphEgg>create(EntityHippogryphEgg::new, EntityClassification.MISC).size(0.5F, 0.5F), "hippogryph_egg");
@@ -73,6 +73,10 @@ public class IafEntityRegistry {
     public static final RegistryObject<EntityType<EntityHydraArrow>> HYDRA_ARROW = registerEntity(EntityType.Builder.<EntityHydraArrow>create(EntityHydraArrow::new, EntityClassification.MISC).size(0.5F, 0.5F).setCustomClientFactory(EntityHydraArrow::new), "hydra_arrow");
     public static final RegistryObject<EntityType<EntityDreadLichSkull>> DREAD_LICH_SKULL = registerEntity(EntityType.Builder.<EntityDreadLichSkull>create(EntityDreadLichSkull::new, EntityClassification.MISC).size(0.5F, 0.5F).setCustomClientFactory(EntityDreadLichSkull::new), "dread_lich_skull");
     public static final RegistryObject<EntityType<EntityDreadQueenSkull>> DREAD_QUEEN_SKULL = registerEntity(EntityType.Builder.<EntityDreadQueenSkull>create(EntityDreadQueenSkull::new, EntityClassification.MISC).size(0.7F, 0.7F).setCustomClientFactory(EntityDreadQueenSkull::new), "dread_queen_skull");
+
+    public static final RegistryObject<EntityType<EntityBlackFrost>> BLACK_FROST = registerEntity(EntityType.Builder.<EntityBlackFrost>create(EntityBlackFrost::new, EntityClassification.CREATURE).size(0.78F, 1.2F).setTrackingRange(256), "black_frost");
+    public static final RegistryObject<EntityType<EntityBlackFrostCharge>> BLACK_FROST_CHARGE = registerEntity(EntityType.Builder.<EntityBlackFrostCharge>create(EntityBlackFrostCharge::new, EntityClassification.MISC).size(0.9F, 0.9F).setCustomClientFactory(EntityBlackFrostCharge::new), "black_frost_charge");
+
 
 
     //ALLTHEMODIUM COMPAT
@@ -164,6 +168,9 @@ public class IafEntityRegistry {
         creationEvent.put(DREAD_KNIGHT, EntityDreadKnight.bakeAttributes().create());
         creationEvent.put(DREAD_SCUTTLER, EntityDreadScuttler.bakeAttributes().create());
         creationEvent.put(DREAD_QUEEN, EntityDreadQueen.bakeAttributes().create());
+
+        creationEvent.put(BLACK_FROST.get(), EntityIceDragon.bakeAttributes().create());
+
         creationEvent.put(HYDRA, EntityHydra.bakeAttributes().create());
         creationEvent.put(GHOST, EntityGhost.bakeAttributes().create());
     }
