@@ -8,6 +8,7 @@ import com.github.alexthe666.iceandfire.IafConfig;
 import com.github.alexthe666.iceandfire.entity.ai.DreadAITargetNonDread;
 import com.github.alexthe666.iceandfire.entity.util.DragonUtils;
 import com.github.alexthe666.iceandfire.entity.util.IAnimalFear;
+import com.github.alexthe666.iceandfire.entity.util.IDreadMob;
 import com.github.alexthe666.iceandfire.entity.util.IVillagerFear;
 import com.github.alexthe666.iceandfire.item.IafItemRegistry;
 import com.google.common.base.Predicate;
@@ -36,6 +37,10 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.Hand;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.BossInfo;
 import net.minecraft.world.DifficultyInstance;
@@ -47,6 +52,7 @@ public class EntityDreadQueen extends EntityDreadMob implements IAnimatedEntity,
 
     public static Animation ANIMATION_SPAWN = Animation.create(40);
     private static final DataParameter<Integer> VARIANT = EntityDataManager.createKey(EntityDreadQueen.class, DataSerializers.VARINT);
+    private int fireCooldown = 0;
 
     private final ServerBossInfo bossInfo = (new ServerBossInfo(this.getDisplayName(), BossInfo.Color.BLUE, BossInfo.Overlay.PROGRESS));
     private int animationTick;
@@ -62,8 +68,8 @@ public class EntityDreadQueen extends EntityDreadMob implements IAnimatedEntity,
         this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
         this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 8.0F));
         this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
-        this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10,true,false,new Predicate<LivingEntity>() {
+        this.targetSelector.addGoal(1, new HurtByTargetGoal(this, IDreadMob.class));
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, PlayerEntity.class, 10, true, false, new Predicate<LivingEntity>() {
             @Override
             public boolean apply(@Nullable LivingEntity entity) {
                 return DragonUtils.canHostilesTarget(entity);
@@ -96,6 +102,7 @@ public class EntityDreadQueen extends EntityDreadMob implements IAnimatedEntity,
         super.registerData();
         this.dataManager.register(VARIANT, Integer.valueOf(0));
     }
+
     public void readAdditional(CompoundNBT compound) {
         super.readAdditional(compound);
 
@@ -183,5 +190,31 @@ public class EntityDreadQueen extends EntityDreadMob implements IAnimatedEntity,
     @Override
     public boolean canDespawn(double distanceToClosestPlayer) {
         return false;
+    }
+
+
+    public void attackEntityWithRangedAttack(LivingEntity target, float distanceFactor) {
+        boolean flag = false;
+        if (fireCooldown == 0 && !flag) {
+            this.swingArm(Hand.MAIN_HAND);
+            this.playSound(SoundEvents.ENTITY_ZOMBIE_INFECT, this.getSoundVolume(), this.getSoundPitch());
+            EntityDreadLichSkull skull = new EntityDreadLichSkull(IafEntityRegistry.DREAD_LICH_SKULL.get(), world, this,
+                    6);
+            double d0 = target.getPosX() - this.getPosX();
+            double d1 = target.getBoundingBox().minY + target.getHeight() * 2 - skull.getPosY();
+            double d2 = target.getPosZ() - this.getPosZ();
+            double d3 = MathHelper.sqrt(d0 * d0 + d2 * d2);
+            skull.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 0.0F, 14 - this.world.getDifficulty().getId() * 4);
+            this.world.addEntity(skull);
+            fireCooldown = 100;
+        }
+    }
+    private double getHeightFromXZ(int x, int z) {
+        BlockPos thisPos = new BlockPos(x, this.getPosY() + 7, z);
+        while (world.isAirBlock(thisPos) && thisPos.getY() > 2) {
+            thisPos = thisPos.down();
+        }
+        double height = thisPos.getY() + 1.0D;
+        return height;
     }
 }
