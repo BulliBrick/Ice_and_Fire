@@ -1798,23 +1798,12 @@ public abstract class EntityDragonBase extends TameableEntity implements IPassab
     }
 //TODO
     public float getRenderSize() {
-        if (getDragonStage() != 0){
-        final int stage = 1;
+        final int stage = this.getDragonStage() - 1;
         final float step = (growth_stages[stage][1] - growth_stages[stage][0]) / 25;
         if (this.getAgeInDays() > 125) {
             return growth_stages[stage][0] + (step * 25);
         }
         return growth_stages[stage][0] + (step * this.getAgeFactor());
-        }
-        else {
-            final int stage = 1;
-            final float step =(growth_stages[stage][1] - growth_stages[stage][0]) / 25;
-            if (this.getAgeInDays() > 125) {
-                return growth_stages[stage][0] + (step * 25);
-            }
-            return growth_stages[stage][0] + (step * this.getAgeFactor());
-        }
-
     }
 
     private int getAgeFactor() {

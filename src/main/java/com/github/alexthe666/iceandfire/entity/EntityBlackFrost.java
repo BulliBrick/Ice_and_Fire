@@ -72,7 +72,7 @@ public class EntityBlackFrost extends EntityDragonBase {
     //required
     @Override
     public String getVariantName(int variant) {
-                return "blackfrost_";
+                return "silver_";
     }
     //required
     @Override
@@ -155,8 +155,7 @@ public class EntityBlackFrost extends EntityDragonBase {
             this.flyTicks = 0;
         }
         if (!world.isRemote && attackTarget != null) {
-            //TODO fix index out of bouds, try with fixed value for black frost
-            if (this.getBoundingBox().grow(0 + 6.0F * 0.33F, 0 + 6.0F * 0.33F, 0 + 6.0F * 0.33F).intersects(attackTarget.getBoundingBox())) {
+            if (this.getBoundingBox().grow(0 + this.getRenderSize() * 0.33F, 0 + this.getRenderSize() * 0.33F, 0 + this.getRenderSize() * 0.33F).intersects(attackTarget.getBoundingBox())) {
                 attackEntityAsMob(attackTarget);
             }
             if (this.groundAttack == IafDragonAttacks.Ground.FIRE && (usingGroundAttack || this.onGround)) {

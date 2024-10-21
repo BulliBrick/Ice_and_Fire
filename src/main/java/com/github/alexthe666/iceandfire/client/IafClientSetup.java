@@ -44,6 +44,7 @@ public class IafClientSetup {
     public static TabulaModel ICE_DRAGON_BASE_MODEL;
     public static TabulaModel SEA_SERPENT_BASE_MODEL;
     public static TabulaModel LIGHTNING_DRAGON_BASE_MODEL;
+    public static TabulaModel BLACK_FROST_BASE_MODEL;
 
     @SubscribeEvent
     public static void setupClient(FMLClientSetupEvent event) {
@@ -56,6 +57,8 @@ public class IafClientSetup {
             FIRE_DRAGON_BASE_MODEL = new TabulaModel(TabulaModelHandler.INSTANCE.loadTabulaModel("/assets/iceandfire/models/tabula/firedragon/firedragon_Ground"), new FireDragonTabulaModelAnimator());
             ICE_DRAGON_BASE_MODEL = new TabulaModel(TabulaModelHandler.INSTANCE.loadTabulaModel("/assets/iceandfire/models/tabula/icedragon/icedragon_Ground"), new IceDragonTabulaModelAnimator());
             LIGHTNING_DRAGON_BASE_MODEL = new TabulaModel(TabulaModelHandler.INSTANCE.loadTabulaModel("/assets/iceandfire/models/tabula/lightningdragon/lightningdragon_Ground"), new LightningTabulaDragonAnimator());
+            //TODO add black frost models
+            BLACK_FROST_BASE_MODEL = new TabulaModel(TabulaModelHandler.INSTANCE.loadTabulaModel("/assets/iceandfire/models/tabula/icedragon/icedragon_Ground"), new IceDragonTabulaModelAnimator());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -113,7 +116,7 @@ public class IafClientSetup {
         RenderingRegistry.registerEntityRenderingHandler(IafEntityRegistry.DREAD_QUEEN, manager -> new RenderDreadQueen(manager));
         RenderingRegistry.registerEntityRenderingHandler(IafEntityRegistry.DREAD_QUEEN_SKULL.get(), manager -> new RenderDreadQueenSkull());
         //needs to be adapted to black frost
-        RenderingRegistry.registerEntityRenderingHandler(IafEntityRegistry.BLACK_FROST.get(), manager -> new RenderDragonBase(manager, ICE_DRAGON_BASE_MODEL, 1));
+        RenderingRegistry.registerEntityRenderingHandler(IafEntityRegistry.BLACK_FROST.get(), manager -> new RenderDragonBase(manager, BLACK_FROST_BASE_MODEL, 1));
         RenderingRegistry.registerEntityRenderingHandler(IafEntityRegistry.HYDRA, manager -> new RenderHydra(manager));
         RenderingRegistry.registerEntityRenderingHandler(IafEntityRegistry.HYDRA_BREATH.get(), manager -> new RenderNothing(manager));
         RenderingRegistry.registerEntityRenderingHandler(IafEntityRegistry.HYDRA_ARROW.get(), manager -> new RenderHydraArrow(manager));
