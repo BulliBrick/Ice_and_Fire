@@ -1796,7 +1796,7 @@ public abstract class EntityDragonBase extends TameableEntity implements IPassab
     @Override
     protected void updateFallState(double y, boolean onGroundIn, BlockState state, BlockPos pos) {
     }
-//TODO
+//TODO fixed ?
     public float getRenderSize() {
         final int stage = this.getDragonStage() - 1;
         final float step = (growth_stages[stage][1] - growth_stages[stage][0]) / 25;
