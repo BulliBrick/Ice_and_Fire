@@ -146,7 +146,7 @@ public enum EnumDragonTextures {
         LIGHTNINGSTAGE5SKELETONTEXTURE = new ResourceLocation("iceandfire:textures/models/lightningdragon/lightning_skeleton_5.png");
         LIGHTNING_MALE_OVERLAY = new ResourceLocation("iceandfire:textures/models/lightningdragon/male_" + lightningVariant.substring(0, lightningVariant.length() - 1) + ".png");
 
-        BLACKFROSTTEXTURE = new ResourceLocation("iceandfire:textures/models/blackfrost/blackfrost.png");
+        BLACKFROSTTEXTURE = new ResourceLocation("iceandfire:textures/models/dread/black_frost.png");
 
     }
 
@@ -422,13 +422,13 @@ public enum EnumDragonTextures {
         EnumDragonTextures textures = getDragonEnum(dragon);
         if (dragon.isModelDead()) {
             if (dragon.getDeathStage() >= (dragon.getAgeInDays() / 5) / 2) {
-                return textures.ICESTAGE5SKELETONTEXTURE;
+                return textures.BLACKFROSTTEXTURE;
             } else {
-                return textures.ICESTAGE5SLEEPINGTEXTURE;
+                return textures.BLACKFROSTTEXTURE;
             }
         }
         if (dragon.isSleeping() || dragon.isBlinking()) {
-            return textures.ICESTAGE5SLEEPINGTEXTURE;
+            return textures.BLACKFROSTTEXTURE;
         } else {
             return textures.BLACKFROSTTEXTURE;
         }

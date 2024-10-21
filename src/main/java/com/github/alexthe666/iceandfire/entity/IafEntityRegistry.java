@@ -169,7 +169,7 @@ public class IafEntityRegistry {
         creationEvent.put(DREAD_SCUTTLER, EntityDreadScuttler.bakeAttributes().create());
         creationEvent.put(DREAD_QUEEN, EntityDreadQueen.bakeAttributes().create());
 
-        creationEvent.put(BLACK_FROST.get(), EntityIceDragon.bakeAttributes().create());
+        creationEvent.put(BLACK_FROST.get(), EntityBlackFrost.bakeAttributes().create());
 
         creationEvent.put(HYDRA, EntityHydra.bakeAttributes().create());
         creationEvent.put(GHOST, EntityGhost.bakeAttributes().create());
