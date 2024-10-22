@@ -6,10 +6,10 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.util.ResourceLocation;
 
 public enum EnumDragonTextures {
-    VARIANT1("red_", "blue_", "electric_", "blackfrost_"),
-    VARIANT2("green_", "white_", "amythest_", "blackfrost_"),
-    VARIANT3("bronze_", "sapphire_", "copper_", "blackfrost_"),
-    VARIANT4("gray_", "silver_", "black_", "blackfrost_");
+    VARIANT1("red_", "blue_", "electric_", "black_frost_"),
+    VARIANT2("green_", "white_", "amythest_", "black_frost_"),
+    VARIANT3("bronze_", "sapphire_", "copper_", "black_frost_"),
+    VARIANT4("gray_", "silver_", "black_", "black_frost_");
 
     public final ResourceLocation FIRESTAGE1TEXTURE;
     public final ResourceLocation FIRESTAGE2TEXTURE;
@@ -74,10 +74,12 @@ public enum EnumDragonTextures {
     public final ResourceLocation LIGHTNINGSTAGE3SKELETONTEXTURE;
     public final ResourceLocation LIGHTNINGSTAGE4SKELETONTEXTURE;
     public final ResourceLocation LIGHTNINGSTAGE5SKELETONTEXTURE;
+    public final ResourceLocation LIGHTNING_MALE_OVERLAY;
 
     public final ResourceLocation BLACKFROSTTEXTURE;
+    public final ResourceLocation BLACKFROSTEYESTEXTURE;
 
-    public final ResourceLocation LIGHTNING_MALE_OVERLAY;
+
 
     EnumDragonTextures(String fireVariant, String iceVariant, String lightningVariant, String blackFrostVariant) {
         FIRESTAGE1TEXTURE = new ResourceLocation("iceandfire:textures/models/firedragon/" + fireVariant + "1.png");
@@ -146,7 +148,7 @@ public enum EnumDragonTextures {
         LIGHTNING_MALE_OVERLAY = new ResourceLocation("iceandfire:textures/models/lightningdragon/male_" + lightningVariant.substring(0, lightningVariant.length() - 1) + ".png");
 
         BLACKFROSTTEXTURE = new ResourceLocation("iceandfire:textures/models/blackfrost/" + blackFrostVariant + ".png");
-
+        BLACKFROSTEYESTEXTURE = new ResourceLocation("iceandfire:textures/models/blackfrost/" + blackFrostVariant + "_eyes.png");
     }
 
 
@@ -195,7 +197,7 @@ public enum EnumDragonTextures {
                 default:
                     return textures.LIGHTNINGSTAGE4EYESTEXTURE;
             }
-        } else {
+        } else if (dragon instanceof EntityFireDragon){
             switch (dragon.getDragonStage()) {
                 case 1:
                     return textures.FIRESTAGE1EYESTEXTURE;
@@ -210,6 +212,8 @@ public enum EnumDragonTextures {
                 default:
                     return textures.FIRESTAGE4EYESTEXTURE;
             }
+        } else {
+            return textures.BLACKFROSTEYESTEXTURE;
         }
     }
 
@@ -421,7 +425,7 @@ public enum EnumDragonTextures {
         EnumDragonTextures textures = getDragonEnum(dragon);
         if (dragon.isModelDead()) {
             if (dragon.getDeathStage() >= (dragon.getAgeInDays() / 5) / 2) {
-                return textures.BLACKFROSTTEXTURE;
+                return textures.ICESTAGE5SKELETONTEXTURE;
             } else {
                 return textures.BLACKFROSTTEXTURE;
             }
