@@ -6,11 +6,10 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.util.ResourceLocation;
 
 public enum EnumDragonTextures {
-    VARIANT1("red_", "blue_", "electric_"),
-    VARIANT2("green_", "white_", "amythest_"),
-    VARIANT3("bronze_", "sapphire_", "copper_"),
-    VARIANT4("gray_", "silver_", "black_"),
-    VARIANT5("nan_", "blackfrost_", "nan_");
+    VARIANT1("red_", "blue_", "electric_", "blackfrost_"),
+    VARIANT2("green_", "white_", "amythest_", "blackfrost_"),
+    VARIANT3("bronze_", "sapphire_", "copper_", "blackfrost_"),
+    VARIANT4("gray_", "silver_", "black_", "blackfrost_");
 
     public final ResourceLocation FIRESTAGE1TEXTURE;
     public final ResourceLocation FIRESTAGE2TEXTURE;
@@ -80,7 +79,7 @@ public enum EnumDragonTextures {
 
     public final ResourceLocation LIGHTNING_MALE_OVERLAY;
 
-    EnumDragonTextures(String fireVariant, String iceVariant, String lightningVariant) {
+    EnumDragonTextures(String fireVariant, String iceVariant, String lightningVariant, String blackFrostVariant) {
         FIRESTAGE1TEXTURE = new ResourceLocation("iceandfire:textures/models/firedragon/" + fireVariant + "1.png");
         FIRESTAGE2TEXTURE = new ResourceLocation("iceandfire:textures/models/firedragon/" + fireVariant + "2.png");
         FIRESTAGE3TEXTURE = new ResourceLocation("iceandfire:textures/models/firedragon/" + fireVariant + "3.png");
@@ -146,7 +145,7 @@ public enum EnumDragonTextures {
         LIGHTNINGSTAGE5SKELETONTEXTURE = new ResourceLocation("iceandfire:textures/models/lightningdragon/lightning_skeleton_5.png");
         LIGHTNING_MALE_OVERLAY = new ResourceLocation("iceandfire:textures/models/lightningdragon/male_" + lightningVariant.substring(0, lightningVariant.length() - 1) + ".png");
 
-        BLACKFROSTTEXTURE = new ResourceLocation("iceandfire:textures/models/dread/black_frost.png");
+        BLACKFROSTTEXTURE = new ResourceLocation("iceandfire:textures/models/blackfrost/" + blackFrostVariant + ".png");
 
     }
 
