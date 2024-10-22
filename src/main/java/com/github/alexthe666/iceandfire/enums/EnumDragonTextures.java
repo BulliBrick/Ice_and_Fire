@@ -78,6 +78,7 @@ public enum EnumDragonTextures {
 
     public final ResourceLocation BLACKFROSTTEXTURE;
     public final ResourceLocation BLACKFROSTEYESTEXTURE;
+    public final ResourceLocation BLACKFROSTSLEEPINGTEXTURE;
 
 
 
@@ -149,6 +150,7 @@ public enum EnumDragonTextures {
 
         BLACKFROSTTEXTURE = new ResourceLocation("iceandfire:textures/models/blackfrost/" + blackFrostVariant + ".png");
         BLACKFROSTEYESTEXTURE = new ResourceLocation("iceandfire:textures/models/blackfrost/" + blackFrostVariant + "_eyes.png");
+        BLACKFROSTSLEEPINGTEXTURE = new ResourceLocation("iceandfire:textures/models/blackfrost/" + blackFrostVariant + "_sleeping.png");
     }
 
 
@@ -427,11 +429,11 @@ public enum EnumDragonTextures {
             if (dragon.getDeathStage() >= (dragon.getAgeInDays() / 5) / 2) {
                 return textures.ICESTAGE5SKELETONTEXTURE;
             } else {
-                return textures.BLACKFROSTTEXTURE;
+                return textures.BLACKFROSTSLEEPINGTEXTURE;
             }
         }
         if (dragon.isSleeping() || dragon.isBlinking()) {
-            return textures.BLACKFROSTTEXTURE;
+            return textures.BLACKFROSTSLEEPINGTEXTURE;
         } else {
             return textures.BLACKFROSTTEXTURE;
         }
