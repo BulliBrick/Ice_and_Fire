@@ -6,10 +6,10 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.util.ResourceLocation;
 
 public enum EnumDragonTextures {
-    VARIANT1("red_", "blue_", "electric_", "black_frost_"),
-    VARIANT2("green_", "white_", "amythest_", "black_frost_"),
-    VARIANT3("bronze_", "sapphire_", "copper_", "black_frost_"),
-    VARIANT4("gray_", "silver_", "black_", "black_frost_");
+    VARIANT1("red_", "blue_", "electric_", "black_frost"),
+    VARIANT2("green_", "white_", "amythest_", "black_frost"),
+    VARIANT3("bronze_", "sapphire_", "copper_", "black_frost"),
+    VARIANT4("gray_", "silver_", "black_", "black_frost");
 
     public final ResourceLocation FIRESTAGE1TEXTURE;
     public final ResourceLocation FIRESTAGE2TEXTURE;
@@ -429,11 +429,11 @@ public enum EnumDragonTextures {
             if (dragon.getDeathStage() >= (dragon.getAgeInDays() / 5) / 2) {
                 return textures.ICESTAGE5SKELETONTEXTURE;
             } else {
-                return textures.BLACKFROSTSLEEPINGTEXTURE;
+                return textures.BLACKFROSTTEXTURE;
             }
         }
         if (dragon.isSleeping() || dragon.isBlinking()) {
-            return textures.BLACKFROSTSLEEPINGTEXTURE;
+            return textures.BLACKFROSTTEXTURE;
         } else {
             return textures.BLACKFROSTTEXTURE;
         }

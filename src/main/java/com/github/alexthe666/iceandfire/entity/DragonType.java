@@ -1,22 +1,10 @@
 package com.github.alexthe666.iceandfire.entity;
 
-import com.github.alexthe666.iceandfire.IafConfig;
-import com.github.alexthe666.iceandfire.block.BlockEggInIce;
-import com.github.alexthe666.iceandfire.block.IafBlockRegistry;
-import com.github.alexthe666.iceandfire.entity.tile.TileEntityEggInIce;
-import com.github.alexthe666.iceandfire.misc.IafSoundRegistry;
-
-import net.minecraft.block.Blocks;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.effect.LightningBoltEntity;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-
 public abstract class DragonType {
     public static final DragonType FIRE = new FireDragonType();
     public static final DragonType ICE = new IceDragonType();
     public static final DragonType LIGHTNING = new LightningDragonType();
+    public static final DragonType BLACKFROST = new BlackFrostDragonType();
 
     private String name;
     private boolean piscivore;
@@ -41,6 +29,12 @@ public abstract class DragonType {
         }
     }
 
+    private static class BlackFrostDragonType extends DragonType {
+        public int getIntValue() {
+            return 3;
+        }
+    }
+
     public static int getIntFromType(DragonType type) {
         return type.getIntValue();
     }
@@ -50,6 +44,8 @@ public abstract class DragonType {
             return "lightning";
         }else if (type == 1){
             return "ice";
+        } else if (type == 3){
+            return "black_frost";
         }else{
             return "fire";
         }

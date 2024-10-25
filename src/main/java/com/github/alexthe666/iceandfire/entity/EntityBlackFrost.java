@@ -72,7 +72,7 @@ public class EntityBlackFrost extends EntityDragonBase {
     //required
     @Override
     public String getVariantName(int variant) {
-                return "blackfrost_";
+                return "black_frost";
     }
     //required
     @Override

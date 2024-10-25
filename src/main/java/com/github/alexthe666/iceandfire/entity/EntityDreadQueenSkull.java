@@ -12,6 +12,8 @@ import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.IPacket;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.EntityPredicates;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvent;
@@ -47,8 +49,7 @@ public class EntityDreadQueenSkull extends AbstractArrowEntity {
         this.setDamage(7);
     }
 
-    public EntityDreadQueenSkull(EntityType<? extends AbstractArrowEntity> type, World worldIn, LivingEntity shooter,
-                                double dmg) {
+    public EntityDreadQueenSkull(EntityType<? extends AbstractArrowEntity> type, World worldIn, LivingEntity shooter, double dmg) {
         super(type, shooter, worldIn);
         this.setDamage(dmg);
     }
@@ -78,13 +79,13 @@ public class EntityDreadQueenSkull extends AbstractArrowEntity {
             double minusY = target.getPosY() - this.getPosY();
             double minusZ = target.getPosZ() - this.getPosZ();
             double speed = 0.2D;
-            this.setMotion(this.getMotion().add(minusX * speed * 0.1D, minusY * speed * 0.1D, minusZ * speed * 0.1D));
+            this.setMotion(this.getMotion().add(minusX * speed * 0.15D, minusY * speed * 0.15D, minusZ * speed * 0.15D));
         }
         if (shootingEntity instanceof PlayerEntity) {
             LivingEntity target = ((PlayerEntity) shootingEntity).getAttackingEntity();
             if (target == null || !target.isAlive()) {
                 double d0 = 10;
-                List<Entity> list = world.getEntitiesInAABBexcluding(shootingEntity, (new AxisAlignedBB(this.getPosX(), this.getPosY(), this.getPosZ(), this.getPosX() + 1.0D, this.getPosY() + 1.0D, this.getPosZ() + 1.0D)).grow(d0, 10.0D, d0), EntityPredicates.IS_ALIVE);
+                List<Entity> list = world.getEntitiesInAABBexcluding(shootingEntity, (new AxisAlignedBB(this.getPosX(), this.getPosY(), this.getPosZ(), this.getPosX() + 1.0D, this.getPosY() + 1.0D, this.getPosZ() + 1.0D)).grow(d0, 11.0D, d0), EntityPredicates.IS_ALIVE);
                 LivingEntity closest = null;
                 if (!list.isEmpty()) {
                     for(Entity e : list){
@@ -147,6 +148,8 @@ public class EntityDreadQueenSkull extends AbstractArrowEntity {
                 if (shootingEntity != null && entity.isOnSameTeam(shootingEntity)) {
                     return;
                 }
+
+
             }
         }
         super.onEntityHit(raytraceResultIn);
@@ -159,6 +162,8 @@ public class EntityDreadQueenSkull extends AbstractArrowEntity {
         if (living != null && (shootingEntity == null || !living.isEntityEqual(shootingEntity))) {
             if (living instanceof PlayerEntity) {
                 this.damageShield((PlayerEntity) living, (float) this.getDamage());
+                living.addPotionEffect(new EffectInstance(Effects.SLOWNESS, 10, 1));
+
             }
         }
     }
@@ -192,7 +197,7 @@ public class EntityDreadQueenSkull extends AbstractArrowEntity {
 
     @Override
     public float getBrightness() {
-        return 1.0F;
+        return 1.2F;
     }
 
     @Override

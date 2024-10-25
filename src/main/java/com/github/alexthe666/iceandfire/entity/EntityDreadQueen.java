@@ -13,7 +13,6 @@ import com.github.alexthe666.iceandfire.entity.util.IVillagerFear;
 import com.github.alexthe666.iceandfire.item.IafItemRegistry;
 import com.google.common.base.Predicate;
 
-import net.minecraft.client.renderer.model.Variant;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ILivingEntityData;
@@ -22,13 +21,7 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.goal.HurtByTargetGoal;
-import net.minecraft.entity.ai.goal.LookAtGoal;
-import net.minecraft.entity.ai.goal.LookRandomlyGoal;
-import net.minecraft.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.entity.ai.goal.NearestAttackableTargetGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
+import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -39,7 +32,6 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.BossInfo;
@@ -88,7 +80,7 @@ public class EntityDreadQueen extends EntityDreadMob implements IAnimatedEntity,
                 //HEALTH
                 .createMutableAttribute(Attributes.MAX_HEALTH, IafConfig.dreadQueenMaxHealth)
                 //SPEED
-                .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.15D)
+                .createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.25D)
                 //ATTACK
                 .createMutableAttribute(Attributes.ATTACK_DAMAGE, 5D)
                 //FOLLOW RANGE
@@ -130,6 +122,44 @@ public class EntityDreadQueen extends EntityDreadMob implements IAnimatedEntity,
     public void removeTrackingPlayer(ServerPlayerEntity player) {
         super.removeTrackingPlayer(player);
         this.bossInfo.removePlayer(player);
+    }
+
+    public void adjustAttributesBasedOnDistance(LivingEntity target) {
+        double distance = this.getDistance(target);
+
+        // Adjust movement speed based on distance
+        double newSpeed = calculateSpeedBasedOnDistance(distance);
+        this.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(newSpeed);
+
+        // Adjust range attack cooldown based on distance
+        int newCooldown = calculateCooldownBasedOnDistance(distance);
+        this.setFireCooldown(newCooldown);
+    }
+
+    private double calculateSpeedBasedOnDistance(double distance) {
+        //Increase speed as distance increases
+        if (distance < 10) {
+            return 0.2D; // High speed
+        } else if (distance < 30) {
+            return 0.3D; // Medium speed
+        } else {
+            return 0.5D; // Low speed
+        }
+    }
+
+    private int calculateCooldownBasedOnDistance(double distance) {
+        // Decrease cooldown as distance increases
+        if (distance < 20) {
+            return 60; // Long cooldown
+        } else if (distance < 50) {
+            return 40; // Medium cooldown
+        } else {
+            return 20; // Short cooldown
+        }
+    }
+
+    private void setFireCooldown(int fireCooldown) {
+        this.fireCooldown = fireCooldown;
     }
 
 
@@ -192,29 +222,22 @@ public class EntityDreadQueen extends EntityDreadMob implements IAnimatedEntity,
         return false;
     }
 
-
+    @Override
     public void attackEntityWithRangedAttack(LivingEntity target, float distanceFactor) {
-        boolean flag = false;
-        if (fireCooldown == 0 && !flag) {
-            this.swingArm(Hand.MAIN_HAND);
+        if (fireCooldown == 0 && !(target instanceof IDreadMob)) {
+            this.swingArm(Hand.OFF_HAND);
             this.playSound(SoundEvents.ENTITY_ZOMBIE_INFECT, this.getSoundVolume(), this.getSoundPitch());
-            EntityDreadLichSkull skull = new EntityDreadLichSkull(IafEntityRegistry.DREAD_LICH_SKULL.get(), world, this,
-                    6);
+
+            EntityDreadQueenSkull skull = new EntityDreadQueenSkull(IafEntityRegistry.DREAD_QUEEN_SKULL.get(), world, this, 6);
             double d0 = target.getPosX() - this.getPosX();
-            double d1 = target.getBoundingBox().minY + target.getHeight() * 2 - skull.getPosY();
+            double d1 = target.getBoundingBox().minY + target.getHeight() * 0.5 - skull.getPosY();
             double d2 = target.getPosZ() - this.getPosZ();
             double d3 = MathHelper.sqrt(d0 * d0 + d2 * d2);
-            skull.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 0.0F, 14 - this.world.getDifficulty().getId() * 4);
+            skull.shoot(d0, d1 + d3 * 0.20000000298023224D, d2, 1.6F, 14 - this.world.getDifficulty().getId() * 4);
+
             this.world.addEntity(skull);
             fireCooldown = 100;
         }
     }
-    private double getHeightFromXZ(int x, int z) {
-        BlockPos thisPos = new BlockPos(x, this.getPosY() + 7, z);
-        while (world.isAirBlock(thisPos) && thisPos.getY() > 2) {
-            thisPos = thisPos.down();
-        }
-        double height = thisPos.getY() + 1.0D;
-        return height;
-    }
+
 }

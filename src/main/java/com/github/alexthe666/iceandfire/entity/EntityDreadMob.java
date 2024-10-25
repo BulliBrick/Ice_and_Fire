@@ -28,7 +28,7 @@ import net.minecraft.server.management.PreYggdrasilConverter;
 import net.minecraft.world.IServerWorld;
 import net.minecraft.world.World;
 
-public class EntityDreadMob extends MonsterEntity implements IDreadMob {
+public abstract class EntityDreadMob extends MonsterEntity implements IDreadMob {
     protected static final DataParameter<Optional<UUID>> COMMANDER_UNIQUE_ID = EntityDataManager.createKey(EntityDreadMob.class, DataSerializers.OPTIONAL_UNIQUE_ID);
 
     public EntityDreadMob(EntityType<? extends MonsterEntity> t, World worldIn) {
@@ -200,4 +200,6 @@ public class EntityDreadMob extends MonsterEntity implements IDreadMob {
     public CreatureAttribute getCreatureAttribute() {
         return CreatureAttribute.UNDEAD;
     }
+
+    public abstract void attackEntityWithRangedAttack(LivingEntity target, float distanceFactor);
 }
