@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 
 public class ItemDreadQueenStaff extends Item {
 
-    public ItemDreadQueenStaff() {
+    public ItemDreadQueenStaff(String gameName) {
         super(new Item.Properties().maxDamage(150).group(IceAndFire.TAB_ITEMS));
         this.setRegistryName(IceAndFire.MODID, "dread_queen_staff");
     }

@@ -56,7 +56,7 @@ public class IafItemRegistry {
     public static CustomToolMaterial HIPPOCAMPUS_SWORD_TOOL_MATERIAL = new CustomToolMaterial("HippocampusSword", 0, 500, -2F, 0F, 50);
     public static CustomToolMaterial DREAD_SWORD_TOOL_MATERIAL = new CustomToolMaterial("DreadSword", 0, 100, 1F, 10F, 0);
     public static CustomToolMaterial DREAD_KNIGHT_TOOL_MATERIAL = new CustomToolMaterial("DreadKnightSword", 0, 1200, 13F, 0F, 10);
-    public static CustomToolMaterial DREAD_QUEEN_SWORD_TOOL_MATERIAL = new DragonsteelToolMaterial("DreadQueenSword", 0, IafConfig.dragonsteelBaseDurability, (float) IafConfig.dragonsteelBaseDamage + 5F, 10F, 10);
+    public static CustomToolMaterial DREAD_QUEEN_SWORD_TOOL_MATERIAL = new DragonsteelToolMaterial("DreadQueenSword", 0, IafConfig.dragonsteelBaseDurability, (float) IafConfig.dragonsteelBaseDamage + 10F, 12F, 12);
     public static CustomToolMaterial GHOST_SWORD_TOOL_MATERIAL = new CustomToolMaterial("GhostSword", 2, 3000, 5, 10.0F, 25);
 
     public static final Item BESTIARY = new ItemBestiary();
@@ -313,7 +313,7 @@ public class IafItemRegistry {
     public static final Item DREAD_KNIGHT_SWORD = new ItemModSword(DREAD_KNIGHT_TOOL_MATERIAL, "dread_knight_sword");
     public static final Item LICH_STAFF = new ItemLichStaff();
     public static final Item DREAD_QUEEN_SWORD = new ItemModSword(DREAD_QUEEN_SWORD_TOOL_MATERIAL, "dread_queen_sword");
-    public static final Item DREAD_QUEEN_STAFF = new ItemDreadQueenStaff();
+    public static final Item DREAD_QUEEN_STAFF = new ItemDreadQueenStaff("dread_queen_staff");
     public static final Item DREAD_SHARD = new ItemGeneric("dread_shard", 0);
     public static final Item DREAD_KEY = new ItemGeneric("dread_key", 0);
     public static final Item HYDRA_FANG = new ItemGeneric("hydra_fang", 0);

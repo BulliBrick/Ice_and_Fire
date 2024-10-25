@@ -201,5 +201,4 @@ public abstract class EntityDreadMob extends MonsterEntity implements IDreadMob 
         return CreatureAttribute.UNDEAD;
     }
 
-    public abstract void attackEntityWithRangedAttack(LivingEntity target, float distanceFactor);
 }
