@@ -72,17 +72,44 @@ public class EntityBlackFrost extends EntityDragonBase {
     //required
     @Override
     public String getVariantName(int variant) {
+        switch (variant) {
+            default:
                 return "black_frost";
+            case 1:
+                return "black_frost";
+            case 2:
+                return "black_frost";
+            case 3:
+                return "black_frost";
+        }
     }
     //required
     @Override
     public Item getVariantScale(int variant) {
+        switch (variant) {
+            default:
                 return IafItemRegistry.DRAGONSCALES_SILVER;
+            case 1:
+                return IafItemRegistry.DRAGONSCALES_SILVER;
+            case 2:
+                return IafItemRegistry.DRAGONSCALES_SILVER;
+            case 3:
+                return IafItemRegistry.DRAGONSCALES_SILVER;
+        }
     }
     //required
     @Override
     public Item getVariantEgg(int variant) {
-                return IafItemRegistry.DRAGONEGG_SILVER;
+        switch (variant) {
+            default:
+                return IafItemRegistry.DRAGONSCALES_SILVER;
+            case 1:
+                return IafItemRegistry.DRAGONSCALES_SILVER;
+            case 2:
+                return IafItemRegistry.DRAGONSCALES_SILVER;
+            case 3:
+                return IafItemRegistry.DRAGONSCALES_SILVER;
+        }
     }
 
     @Override
