@@ -11,6 +11,7 @@ import com.github.alexthe666.iceandfire.item.IafItemRegistry;
 import com.github.alexthe666.iceandfire.message.MessageDragonSyncFire;
 import com.github.alexthe666.iceandfire.misc.IafSoundRegistry;
 import com.github.alexthe666.iceandfire.misc.IafTagRegistry;
+import com.ibm.icu.util.GenderInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -20,6 +21,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -38,8 +42,9 @@ public class EntityBlackFrost extends EntityDragonBase {
     public static final float[] growth_stage_5 = new float[]{20F, 30F};
     public static final ResourceLocation FEMALE_LOOT = new ResourceLocation("iceandfire", "entities/dragon/ice_dragon_female");
     public static final ResourceLocation SKELETON_LOOT = new ResourceLocation("iceandfire", "entities/dragon/ice_dragon_skeleton");
+    private static final DataParameter<? super Boolean> GENDER = EntityDataManager.createKey(EntityBlackFrost.class, DataSerializers.BOOLEAN);
 
-   public EntityBlackFrost(World worldIn) { this(IafEntityRegistry.BLACK_FROST.get(), worldIn);}
+    public EntityBlackFrost(World worldIn) { this(IafEntityRegistry.BLACK_FROST.get(), worldIn);}
 
 
     public EntityBlackFrost(EntityType<?> t, World worldIn) {
@@ -122,6 +127,13 @@ public class EntityBlackFrost extends EntityDragonBase {
         super.writeAdditional(compound);
         compound.putBoolean("Swimming", this.isSwimming());
         compound.putInt("SwimmingTicks", this.ticksSwiming);
+        this.dataManager.register(GENDER, false); // Ensure gender is set to female
+
+    }
+
+    @Override
+    public boolean isMale() {
+        return false;
     }
 
     @Override
