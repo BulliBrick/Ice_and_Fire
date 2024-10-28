@@ -16,5 +16,6 @@ public class IafTagRegistry {
     public static final ResourceLocation COCKATRICE_TARGETS = new ResourceLocation("iceandfire", "cockatrice_targets");
     public static final ResourceLocation CYCLOPS_UNLIFTABLES = new ResourceLocation("iceandfire", "cyclops_unliftables");
     public static final ResourceLocation BLINDED = new ResourceLocation("iceandfire", "blinded");
+    public static final ResourceLocation BLACK_FROST_TARGETS = new ResourceLocation("iceandfire", "black_frost_targets");
 
 }
