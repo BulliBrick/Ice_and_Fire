@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 import java.util.UUID;
 
-public class EntityDreadMob extends Monster implements IDreadMob {
+public abstract class EntityDreadMob extends Monster implements IDreadMob {
     protected static final EntityDataAccessor<Optional<UUID>> COMMANDER_UNIQUE_ID = SynchedEntityData.defineId(EntityDreadMob.class, EntityDataSerializers.OPTIONAL_UUID);
 
     public EntityDreadMob(EntityType<? extends Monster> t, Level worldIn) {
@@ -114,6 +114,8 @@ public class EntityDreadMob extends Monster implements IDreadMob {
 
     }
 
+
+    public abstract void performRangedAttack(@NotNull LivingEntity target, float distanceFactor);
 
     @Override
     public boolean isAlliedTo(@NotNull Entity entityIn) {
