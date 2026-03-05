@@ -113,6 +113,8 @@ public class IafClientSetup {
         EntityRenderers.register(IafEntityRegistry.DREAD_THRALL.get(), RenderDreadThrall::new);
         EntityRenderers.register(IafEntityRegistry.DREAD_LICH.get(), RenderDreadLich::new);
         EntityRenderers.register(IafEntityRegistry.DREAD_LICH_SKULL.get(), RenderDreadLichSkull::new);
+        EntityRenderers.register(IafEntityRegistry.DREAD_QUEEN.get(), RenderDreadQueen::new);
+        EntityRenderers.register(IafEntityRegistry.DREAD_QUEEN_SKULL.get(), RenderDreadQueenSkull::new);
         EntityRenderers.register(IafEntityRegistry.DREAD_KNIGHT.get(), RenderDreadKnight::new);
         EntityRenderers.register(IafEntityRegistry.DREAD_HORSE.get(), RenderDreadHorse::new);
         EntityRenderers.register(IafEntityRegistry.HYDRA.get(), RenderHydra::new);
@@ -124,6 +126,7 @@ public class IafClientSetup {
         EntityRenderers.register(IafEntityRegistry.HYDRA_MULTIPART.get(), RenderNothing::new);
         EntityRenderers.register(IafEntityRegistry.GHOST.get(), RenderGhost::new);
         EntityRenderers.register(IafEntityRegistry.GHOST_SWORD.get(), RenderGhostSword::new);
+
 
         BlockEntityRenderers.register(IafTileEntityRegistry.PODIUM.get(), RenderPodium::new);
         BlockEntityRenderers.register(IafTileEntityRegistry.IAF_LECTERN.get(), RenderLectern::new);

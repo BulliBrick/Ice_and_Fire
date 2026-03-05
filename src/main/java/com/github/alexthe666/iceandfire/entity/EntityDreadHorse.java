@@ -45,6 +45,12 @@ public class EntityDreadHorse extends SkeletonHorse implements IDreadMob {
         this.entityData.define(COMMANDER_UNIQUE_ID, Optional.empty());
     }
 
+
+    @Override
+    public void performRangedAttack(LivingEntity target, float distanceFactor) {
+        // Dread horses do not perform ranged attacks
+    }
+
     @Override
     public void addAdditionalSaveData(@NotNull CompoundTag compound) {
         super.addAdditionalSaveData(compound);
@@ -109,4 +115,6 @@ public class EntityDreadHorse extends SkeletonHorse implements IDreadMob {
     public @NotNull MobType getMobType() {
         return MobType.UNDEAD;
     }
+
+
 }

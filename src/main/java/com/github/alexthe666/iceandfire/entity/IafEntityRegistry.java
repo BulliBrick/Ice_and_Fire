@@ -42,7 +42,6 @@ public class IafEntityRegistry {
     public static final RegistryObject<EntityType<EntityDragonIceCharge>> ICE_DRAGON_CHARGE = registerEntity(EntityType.Builder.<EntityDragonIceCharge>of(EntityDragonIceCharge::new, MobCategory.MISC).sized(0.9F, 0.9F).setCustomClientFactory(EntityDragonIceCharge::new), "ice_dragon_charge");
     public static final RegistryObject<EntityType<EntityBlackFrost>> BLACK_FROST = registerEntity(EntityType.Builder.<EntityBlackFrost>of(EntityBlackFrost::new, MobCategory.CREATURE).sized(0.78F, 1.2F).setTrackingRange(256).clientTrackingRange(10), "black_frost");
     public static final RegistryObject<EntityType<EntityBlackFrostCharge>> BLACK_FROST_CHARGE = registerEntity(EntityType.Builder.<EntityBlackFrostCharge>of(EntityBlackFrostCharge::new, MobCategory.MISC).sized(0.9F, 0.9F).setCustomClientFactory(EntityBlackFrostCharge::new), "black_frost_charge");
-
     public static final RegistryObject<EntityType<EntityDragonLightningCharge>> LIGHTNING_DRAGON_CHARGE = registerEntity(EntityType.Builder.<EntityDragonLightningCharge>of(EntityDragonLightningCharge::new, MobCategory.MISC).sized(0.9F, 0.9F).setCustomClientFactory(EntityDragonLightningCharge::new), "lightning_dragon_charge");
     public static final RegistryObject<EntityType<EntityHippogryphEgg>> HIPPOGRYPH_EGG = registerEntity(EntityType.Builder.<EntityHippogryphEgg>of(EntityHippogryphEgg::new, MobCategory.MISC).sized(0.5F, 0.5F), "hippogryph_egg");
     public static final RegistryObject<EntityType<EntityHippogryph>> HIPPOGRYPH = registerEntity(EntityType.Builder.of(EntityHippogryph::new, MobCategory.CREATURE).sized(1.7F, 1.6F).setTrackingRange(128), "hippogryph");
@@ -82,6 +81,7 @@ public class IafEntityRegistry {
     public static final RegistryObject<EntityType<EntityDreadScuttler>> DREAD_SCUTTLER = registerEntity(EntityType.Builder.of(EntityDreadScuttler::new, MobCategory.MONSTER).sized(1.5F, 1.3F), "dread_scuttler");
     public static final RegistryObject<EntityType<EntityDreadLich>> DREAD_LICH = registerEntity(EntityType.Builder.of(EntityDreadLich::new, MobCategory.MONSTER).sized(0.6F, 1.8F), "dread_lich");
     public static final RegistryObject<EntityType<EntityDreadQueenSkull>> DREAD_QUEEN_SKULL = registerEntity(EntityType.Builder.<EntityDreadQueenSkull>of(EntityDreadQueenSkull::new, MobCategory.MISC).sized(0.5F, 0.5F).setCustomClientFactory(EntityDreadQueenSkull::new), "dread_queen_skull");
+    public static final RegistryObject<EntityType<EntityDreadQueen>> DREAD_QUEEN = registerEntity(EntityType.Builder.of(EntityDreadQueen::new, MobCategory.MONSTER).sized(1.2F, 2.4F).setTrackingRange(256).clientTrackingRange(10), "dread_queen");
     public static final RegistryObject<EntityType<EntityDreadLichSkull>> DREAD_LICH_SKULL = registerEntity(EntityType.Builder.<EntityDreadLichSkull>of(EntityDreadLichSkull::new, MobCategory.MISC).sized(0.5F, 0.5F).setCustomClientFactory(EntityDreadLichSkull::new), "dread_lich_skull");
     public static final RegistryObject<EntityType<EntityDreadKnight>> DREAD_KNIGHT = registerEntity(EntityType.Builder.of(EntityDreadKnight::new, MobCategory.MONSTER).sized(0.6F, 1.8F), "dread_knight");
     public static final RegistryObject<EntityType<EntityDreadHorse>> DREAD_HORSE = registerEntity(EntityType.Builder.of(EntityDreadHorse::new, MobCategory.MONSTER).sized(1.3964844F, 1.6F), "dread_horse");
@@ -132,6 +132,8 @@ public class IafEntityRegistry {
         creationEvent.put(DREAD_SCUTTLER.get(), EntityDreadScuttler.bakeAttributes().build());
         creationEvent.put(HYDRA.get(), EntityHydra.bakeAttributes().build());
         creationEvent.put(GHOST.get(), EntityGhost.bakeAttributes().build());
+        creationEvent.put(BLACK_FROST.get(), EntityBlackFrost.bakeAttributes().build());
+        creationEvent.put(DREAD_QUEEN.get(), EntityDreadQueen.bakeAttributes().build());
     }
 
     @SubscribeEvent

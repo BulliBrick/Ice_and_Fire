@@ -1,17 +1,14 @@
 package com.github.alexthe666.iceandfire.enums;
 
-import com.github.alexthe666.iceandfire.entity.EntityDragonBase;
-import com.github.alexthe666.iceandfire.entity.EntityDragonSkull;
-import com.github.alexthe666.iceandfire.entity.EntityIceDragon;
-import com.github.alexthe666.iceandfire.entity.EntityLightningDragon;
+import com.github.alexthe666.iceandfire.entity.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 
 public enum EnumDragonTextures {
-    VARIANT1("red_", "blue_", "electric_"),
-    VARIANT2("green_", "white_", "amythest_"),
-    VARIANT3("bronze_", "sapphire_", "copper_"),
-    VARIANT4("gray_", "silver_", "black_");
+    VARIANT1("red_", "blue_", "electric_", "black_frost"),
+    VARIANT2("green_", "white_", "amythest_", "black_frost"),
+    VARIANT3("bronze_", "sapphire_", "copper_", "black_frost"),
+    VARIANT4("gray_", "silver_", "black_", "black_frost");
 
     public final ResourceLocation FIRESTAGE1TEXTURE;
     public final ResourceLocation FIRESTAGE2TEXTURE;
@@ -79,7 +76,12 @@ public enum EnumDragonTextures {
 
     public final ResourceLocation LIGHTNING_MALE_OVERLAY;
 
-    EnumDragonTextures(String fireVariant, String iceVariant, String lightningVariant) {
+    public final ResourceLocation BLACKFROSTTEXTURE;
+    public final ResourceLocation BLACKFROSTEYESTEXTURE;
+    //public final ResourceLocation BLACKFROSTSLEEPINGTEXTURE;
+
+
+    EnumDragonTextures(String fireVariant, String iceVariant, String lightningVariant, String blackFrostVariant) {
         FIRESTAGE1TEXTURE = new ResourceLocation("iceandfire:textures/models/firedragon/" + fireVariant + "1.png");
         FIRESTAGE2TEXTURE = new ResourceLocation("iceandfire:textures/models/firedragon/" + fireVariant + "2.png");
         FIRESTAGE3TEXTURE = new ResourceLocation("iceandfire:textures/models/firedragon/" + fireVariant + "3.png");
@@ -144,6 +146,9 @@ public enum EnumDragonTextures {
         LIGHTNINGSTAGE4SKELETONTEXTURE = new ResourceLocation("iceandfire:textures/models/lightningdragon/lightning_skeleton_4.png");
         LIGHTNINGSTAGE5SKELETONTEXTURE = new ResourceLocation("iceandfire:textures/models/lightningdragon/lightning_skeleton_5.png");
         LIGHTNING_MALE_OVERLAY = new ResourceLocation("iceandfire:textures/models/lightningdragon/male_" + lightningVariant.substring(0, lightningVariant.length() - 1) + ".png");
+        BLACKFROSTTEXTURE = new ResourceLocation("iceandfire:textures/models/dread/" + blackFrostVariant + ".png");
+        BLACKFROSTEYESTEXTURE = new ResourceLocation("iceandfire:textures/models/dread/" + blackFrostVariant + "_eyes.png");
+       // BLACKFROSTSLEEPINGTEXTURE = new ResourceLocation("iceandfire:textures/models/dread/" + blackFrostVariant + "_sleeping.png");
 
     }
 
@@ -153,8 +158,10 @@ public enum EnumDragonTextures {
             return getIceDragonTextures(dragon);
         } else if (dragon instanceof EntityLightningDragon) {
             return getLightningDragonTextures(dragon);
-        } else {
+        } else if (dragon instanceof EntityFireDragon) {
             return getFireDragonTextures(dragon);
+        } else {
+            return getBlackFrostTextures(dragon);
         }
     }
 
@@ -191,7 +198,7 @@ public enum EnumDragonTextures {
                 default:
                     return textures.LIGHTNINGSTAGE4EYESTEXTURE;
             }
-        } else {
+        } else if (dragon instanceof EntityFireDragon) {
             switch (dragon.getDragonStage()) {
                 case 1:
                     return textures.FIRESTAGE1EYESTEXTURE;
@@ -206,7 +213,10 @@ public enum EnumDragonTextures {
                 default:
                     return textures.FIRESTAGE4EYESTEXTURE;
             }
+        } else {
+            return textures.BLACKFROSTEYESTEXTURE;
         }
+
     }
 
     private static ResourceLocation getFireDragonTextures(EntityDragonBase dragon) {
@@ -413,6 +423,23 @@ public enum EnumDragonTextures {
         }
     }
 
+    private static ResourceLocation getBlackFrostTextures(EntityDragonBase dragon) {
+        EnumDragonTextures textures = getDragonEnum(dragon);
+        if (dragon.isModelDead()) {
+            if (dragon.getDeathStage() >= (dragon.getAgeInDays() / 5) / 2) {
+                return textures.ICESTAGE5SKELETONTEXTURE;
+            } else {
+                // TODO: add sleeping texture for black frost
+                return textures.BLACKFROSTTEXTURE;
+            }
+        }
+        if (dragon.isSleeping() || dragon.isBlinking()) {
+            // TODO: add sleeping texture for black frost
+            return textures.BLACKFROSTTEXTURE;
+        } else {
+            return textures.BLACKFROSTTEXTURE;
+        }
+    }
 
     public static EnumDragonTextures getDragonEnum(EntityDragonBase dragon) {
         switch (dragon.getVariant()) {

@@ -40,9 +40,14 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Random;
 
+import static com.github.alexthe666.iceandfire.entity.EntityIceDragon.FEMALE_LOOT;
+
 public class EntityBlackFrost extends EntityDragonBase {
 
-
+    public static final float[] growth_stage_1 = new float[]{20F, 30F};
+    public static final float[] growth_stage_2 = new float[]{20F, 30F};
+    public static final float[] growth_stage_3 = new float[]{20F, 30F};
+    public static final float[] growth_stage_4 = new float[]{20F, 30F};
     public static final float[] growth_stage_5 = new float[]{20F, 30F};
     // TODO: Change to black frost loot once added
     public static final ResourceLocation FEMALE_LOOT = new ResourceLocation("iceandfire", "entities/dragon/ice_dragon_female");
@@ -62,7 +67,15 @@ public class EntityBlackFrost extends EntityDragonBase {
         ANIMATION_WINGBLAST = Animation.create(50);
         ANIMATION_ROAR = Animation.create(40);
         ANIMATION_EPIC_ROAR = Animation.create(60);
-        this.growth_stages = new float[][]{growth_stage_5};
+        this.growth_stages = new float[][]{growth_stage_1, growth_stage_2, growth_stage_3, growth_stage_4, growth_stage_5};
+        this.setAgeInDays(126);
+        //set gender female, looks cleaner
+        this.setGender(false);
+    }
+
+    @Override
+    public void setGender(boolean male) {
+            super.setGender(false); // force female
     }
 
     @Override
@@ -73,6 +86,7 @@ public class EntityBlackFrost extends EntityDragonBase {
         // TODO: Change to black frost targets when those are added
         return entity instanceof Player || DragonUtils.isDragonTargetable(entity, IafTagRegistry.ICE_DRAGON_TARGETS) || entity instanceof WaterAnimal || !this.isTame() && DragonUtils.isVillager(entity);
     }
+
 
     @Override
     protected void defineSynchedData() {
@@ -119,6 +133,19 @@ public class EntityBlackFrost extends EntityDragonBase {
         super.readAdditionalSaveData(compound);
         this.setSwimming(compound.getBoolean("Swimming"));
         this.ticksSwiming = compound.getInt("SwimmingTicks");
+        this.setGender(true);
+    }
+
+    @Override
+    public int getDragonStage() {
+        return 5;
+    }
+
+    @Override
+    public int getAgeInDays() {
+        int age = super.getAgeInDays();
+        // Ensure age is always at least stage 5 minimum (100+ days)
+        return Math.max(age, 126);
     }
 
     @Override
