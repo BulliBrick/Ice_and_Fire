@@ -114,8 +114,10 @@ public abstract class EntityDreadMob extends Monster implements IDreadMob {
 
     }
 
+    @Override
+    public void performRangedAttack(@NotNull LivingEntity target, float distanceFactor) {
 
-    public abstract void performRangedAttack(@NotNull LivingEntity target, float distanceFactor);
+    }
 
     @Override
     public boolean isAlliedTo(@NotNull Entity entityIn) {
