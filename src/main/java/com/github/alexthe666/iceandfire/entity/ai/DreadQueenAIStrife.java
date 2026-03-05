@@ -111,10 +111,16 @@ public class DreadQueenAIStrife extends Goal {
 
             if (!flag && this.seeTime < -60) {
                 this.entity.stopUsingItem();
-            } else if (flag) {
+            } else if (flag && this.attackCooldown <= 0) {
                 this.entity.stopUsingItem();
                 ((RangedAttackMob) this.entity).performRangedAttack(LivingEntity, 0);
+                this.attackCooldown = 20;
             }
+
+            if (this.attackCooldown > 0) {
+                --this.attackCooldown;
+            }
+
         }
     }
 }

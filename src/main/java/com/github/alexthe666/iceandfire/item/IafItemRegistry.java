@@ -322,7 +322,7 @@ public class IafItemRegistry {
     public static final RegistryObject<Item> DREAD_KNIGHT_SWORD = ITEMS.register("dread_knight_sword", () -> new ItemModSword(DREAD_KNIGHT_TOOL_MATERIAL));
     public static final RegistryObject<Item> LICH_STAFF = ITEMS.register("lich_staff", () -> new ItemLichStaff());
     public static final RegistryObject<Item> DREAD_QUEEN_SWORD = ITEMS.register("dread_queen_sword", () -> new ItemModSword(DRAGONSTEEL_TIER_DREAD_QUEEN));
-    public static final RegistryObject<Item> DREAD_QUEEN_STAFF = ITEMS.register("dread_queen_staff", () -> new ItemDreadQueenStaff());
+    public static final RegistryObject<Item> DREAD_QUEEN_STAFF = ITEMS.register("dread_queen_staff", ItemDreadQueenStaff::new);
     public static final RegistryObject<Item> DREAD_SHARD = ITEMS.register("dread_shard", () -> new ItemGeneric(0));
     public static final RegistryObject<Item> DREAD_KEY = ITEMS.register("dread_key", () -> new ItemGeneric(0));
     public static final RegistryObject<Item> HYDRA_FANG = ITEMS.register("hydra_fang", () -> new ItemGeneric(0));

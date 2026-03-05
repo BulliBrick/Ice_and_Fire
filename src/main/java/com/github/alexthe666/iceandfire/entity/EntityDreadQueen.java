@@ -46,7 +46,7 @@ public class EntityDreadQueen extends EntityDreadMob implements IAnimatedEntity,
 
     public static Animation ANIMATION_SPAWN = Animation.create(40);
     public static Animation ANIMATION_SUMMON = Animation.create(15);
-    private static final EntityDataAccessor<Integer> VARIANT = SynchedEntityData.defineId(EntityDreadLich.class, EntityDataSerializers.INT);
+    //private static final EntityDataAccessor<Integer> VARIANT = SynchedEntityData.defineId(EntityDreadLich.class, EntityDataSerializers.INT);
     private int fireCooldown = 0;
     private int minionCooldown = 0;
     private final ServerBossEvent bossInfo = (new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.BLUE, BossEvent.BossBarOverlay.PROGRESS));
