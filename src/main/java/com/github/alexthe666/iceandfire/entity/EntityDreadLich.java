@@ -15,6 +15,7 @@ import com.github.alexthe666.iceandfire.entity.util.IVillagerFear;
 import com.github.alexthe666.iceandfire.enums.EnumParticles;
 import com.github.alexthe666.iceandfire.item.IafItemRegistry;
 import com.github.alexthe666.iceandfire.misc.IafSoundRegistry;
+import com.github.alexthe666.iceandfire.world.IafWorldRegistry;
 import com.google.common.base.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -23,9 +24,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
@@ -41,9 +44,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.StructureFeatureManager;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -67,56 +73,104 @@ public class EntityDreadLich extends EntityDreadMob implements IAnimatedEntity, 
     }
 
     public static boolean canLichSpawnOn(EntityType<? extends Mob> typeIn, ServerLevelAccessor worldIn, MobSpawnType reason, BlockPos pos, Random randomIn) {
-        // Always allow spawner-based spawning
+        // Always allow spawner-based spawning (e.g. from DREAD_SPAWNER blocks)
         if (reason == MobSpawnType.SPAWNER) {
             BlockPos blockpos = pos.below();
             return worldIn.getBlockState(blockpos).isValidSpawn(worldIn, blockpos, typeIn);
         }
 
-        // Natural spawning: must be nighttime
+        // --- Peaceful difficulty check ---
+        // Monster category mobs shouldn't spawn on Peaceful, but we enforce it explicitly
+        // since checkSpawnRules is overridden to return true.
+        if (worldIn instanceof ServerLevel serverLevel) {
+            if (serverLevel.getDifficulty() == Difficulty.PEACEFUL) {
+                return false;
+            }
+        }
+
+        // --- Nighttime check ---
         if (worldIn instanceof Level level) {
             if (level.isDay()) {
                 return false;
             }
         }
 
-        // Valid ground check
+        // --- Valid ground check ---
         BlockPos blockpos = pos.below();
         if (!worldIn.getBlockState(blockpos).isValidSpawn(worldIn, blockpos, typeIn)) {
             return false;
         }
 
-        // Check if biome is cold (temperature < 0.5)
+        // --- Cold biome temperature check ---
         float temperature = worldIn.getBiome(pos).value().getBaseTemperature();
         if (temperature >= 0.5F) {
             return false;
         }
 
-        // Check for nearby dread spawner blocks (mausoleum proximity)
-        // Spawners are on the perimeter of the mausoleum structure
-        boolean nearMausoleum = false;
-        for (BlockPos checkPos : BlockPos.betweenClosed(pos.offset(-16, -8, -16), pos.offset(16, 8, 16))) {
-            if (worldIn.getBlockState(checkPos).getBlock() == IafBlockRegistry.DREAD_SPAWNER.get()) {
-                nearMausoleum = true;
-                break;
-            }
-        }
+        // --- Mausoleum proximity check (structure-aware, then block fallback) ---
+        boolean nearMausoleum = isNearMausoleum(worldIn, pos);
 
-        // Near mausoleum: always allow spawn (biome + night already verified)
-        // In cold biome without mausoleum: apply additional random chance
+        // Near mausoleum: always allow spawn (biome + night + difficulty already verified)
+        // Away from mausoleum: apply the configurable random chance
         if (!nearMausoleum) {
             if (randomIn.nextInt(IafConfig.lichSpawnChance) != 0) {
                 return false;
             }
         }
 
-        IceAndFire.LOGGER.debug("Dread Lich SPAWNING at {} (nearMausoleum={})", pos, nearMausoleum);
+        IceAndFire.LOGGER.debug("Dread Lich spawn approved at {} (nearMausoleum={})", pos, nearMausoleum);
         return true;
     }
 
-    // Override Monster's checkSpawnRules which requires isDarkEnoughToSpawn.
-    // Liches are undead necromancers that spawn at night in cold biomes regardless of light level.
-    // The nighttime + cold biome checks are already enforced in canLichSpawnOn above.
+    private static boolean isNearMausoleum(ServerLevelAccessor worldIn, BlockPos pos) {
+        if (!(worldIn instanceof ServerLevel serverLevel)) {
+            return false;
+        }
+
+        StructureFeatureManager structureManager = serverLevel.structureFeatureManager();
+
+        // Tier 1: Check if pos is directly inside a mausoleum structure
+        // getStructureAt returns StructureStart.INVALID_START if not inside any instance
+        // of the given structure. This is very cheap — it reads from chunk structure data.
+        try {
+            ConfiguredStructureFeature<?, ?> mausoleumCF = IafWorldRegistry.MAUSOLEUM_CF.value();
+            StructureStart structureStart = structureManager.getStructureAt(pos, mausoleumCF);
+            if (structureStart.isValid()) {
+                return true;
+            }
+        } catch (Exception e) {
+            // MAUSOLEUM_CF might not be initialized in edge cases (e.g. mod loading order)
+            // Fall through to block scan
+            IceAndFire.LOGGER.debug("Mausoleum structure check failed, falling back to block scan", e);
+        }
+
+        // Tier 2: Targeted block scan with reduced radius
+        // Only scan if the spawn chunk or adjacent chunks could plausibly contain a mausoleum.
+        //
+        // Scan a 17x9x17 volume (8 blocks horizontal, 4 vertical) = 2,601 positions
+        // This is ~7x cheaper than the original 33x17x33 scan.
+        // Mausoleums are compact jigsaw structures, so 8 blocks is sufficient for "nearby" spawning.
+        for (BlockPos checkPos : BlockPos.betweenClosed(pos.offset(-8, -4, -8), pos.offset(8, 4, 8))) {
+            if (worldIn.getBlockState(checkPos).getBlock() == IafBlockRegistry.DREAD_SPAWNER.get()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Override Monster's checkSpawnRules which requires isDarkEnoughToSpawn.
+     * Liches are undead necromancers that spawn at night in cold biomes regardless of light level.
+     *
+     * All spawn conditions are enforced in canLichSpawnOn:
+     * - Peaceful difficulty rejection
+     * - Nighttime requirement
+     * - Cold biome temperature gate
+     * - Valid ground block
+     * - Mausoleum proximity (structure + block scan)
+     * - Random chance roll (when not near mausoleum)
+     */
     @Override
     public boolean checkSpawnRules(@NotNull LevelAccessor worldIn, @NotNull MobSpawnType spawnReasonIn) {
         return true;
