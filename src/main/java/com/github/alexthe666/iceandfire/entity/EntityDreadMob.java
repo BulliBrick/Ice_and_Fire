@@ -121,7 +121,7 @@ public abstract class EntityDreadMob extends Monster implements IDreadMob {
 
     @Override
     public boolean isAlliedTo(@NotNull Entity entityIn) {
-        return entityIn instanceof IDreadMob || super.isAlliedTo(entityIn);
+        return entityIn instanceof IDreadMob || entityIn instanceof EntityBlackFrost || super.isAlliedTo(entityIn);
     }
 
     @Nullable
@@ -136,10 +136,16 @@ public abstract class EntityDreadMob extends Monster implements IDreadMob {
     @Override
     public void aiStep() {
         super.aiStep();
-        if (!level.isClientSide && this.getCommander() instanceof EntityDreadLich) {
-            EntityDreadLich lich = (EntityDreadLich) this.getCommander();
-            if (lich.getTarget() != null && lich.getTarget().isAlive()) {
-                this.setTarget(lich.getTarget());
+        if (!level.isClientSide) {
+            Entity commander = this.getCommander();
+            if (commander instanceof LivingEntity livingCommander) {
+                // Follow commander's target (works for both Lich and Dread Queen commanders)
+                if (livingCommander instanceof Mob mobCommander) {
+                    LivingEntity commanderTarget = mobCommander.getTarget();
+                    if (commanderTarget != null && commanderTarget.isAlive()) {
+                        this.setTarget(commanderTarget);
+                    }
+                }
             }
         }
     }
@@ -166,7 +172,7 @@ public abstract class EntityDreadMob extends Monster implements IDreadMob {
     }
 
     public void onKillEntity(LivingEntity LivingEntityIn) {
-        Entity commander = this instanceof EntityDreadLich ? this : this.getCommander();
+        Entity commander = this instanceof EntityDreadLich || this instanceof EntityDreadQueen ? this : this.getCommander();
         if (commander != null && !(LivingEntityIn instanceof EntityDragonBase)) {// zombie dragons!!!!
             Entity summoned = necromancyEntity(LivingEntityIn);
             if (summoned != null) {
@@ -176,6 +182,8 @@ public abstract class EntityDreadMob extends Monster implements IDreadMob {
                 }
                 if (commander instanceof EntityDreadLich) {
                     ((EntityDreadLich) commander).setMinionCount(((EntityDreadLich) commander).getMinionCount() + 1);
+                } else if (commander instanceof EntityDreadQueen) {
+                    ((EntityDreadQueen) commander).setMinionCount(((EntityDreadQueen) commander).getMinionCount() + 1);
                 }
                 if (summoned instanceof EntityDreadMob) {
                     ((EntityDreadMob) summoned).setCommanderId(commander.getUUID());
@@ -187,9 +195,13 @@ public abstract class EntityDreadMob extends Monster implements IDreadMob {
 
     @Override
     public void remove(@NotNull RemovalReason reason) {
-        if (!isRemoved() && this.getCommander() != null && this.getCommander() instanceof EntityDreadLich) {
-            EntityDreadLich lich = (EntityDreadLich) this.getCommander();
-            lich.setMinionCount(lich.getMinionCount() - 1);
+        if (!isRemoved() && this.getCommander() != null) {
+            Entity commander = this.getCommander();
+            if (commander instanceof EntityDreadLich lich) {
+                lich.setMinionCount(lich.getMinionCount() - 1);
+            } else if (commander instanceof EntityDreadQueen queen) {
+                queen.setMinionCount(queen.getMinionCount() - 1);
+            }
         }
         super.remove(reason);
     }

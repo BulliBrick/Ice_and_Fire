@@ -99,12 +99,53 @@ public class EntityDreadQueen extends EntityDreadMob implements IAnimatedEntity,
 
 
     @Override
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(MINION_COUNT, 0);
+    }
+
+    // Dread Queen is the top-level commander - she has no commander above her
+    @Override
+    public Entity getCommander() {
+        return null;
+    }
+
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        if (fireCooldown > 0) {
+            fireCooldown--;
+        }
+        if (minionCooldown > 0) {
+            minionCooldown--;
+        }
+        if (this.level.isClientSide && this.getAnimation() == ANIMATION_SUMMON) {
+            double d0 = 0;
+            double d1 = 0;
+            double d2 = 0;
+            float f = this.yBodyRot * 0.017453292F + net.minecraft.util.Mth.cos(this.tickCount * 0.6662F) * 0.25F;
+            float f1 = net.minecraft.util.Mth.cos(f);
+            float f2 = net.minecraft.util.Mth.sin(f);
+            com.github.alexthe666.iceandfire.IceAndFire.PROXY.spawnParticle(com.github.alexthe666.iceandfire.enums.EnumParticles.Dread_Torch, this.getX() + (double) f1 * 0.6D, this.getY() + 1.8D, this.getZ() + (double) f2 * 0.6D, d0, d1, d2);
+            com.github.alexthe666.iceandfire.IceAndFire.PROXY.spawnParticle(com.github.alexthe666.iceandfire.enums.EnumParticles.Dread_Torch, this.getX() - (double) f1 * 0.6D, this.getY() + 1.8D, this.getZ() - (double) f2 * 0.6D, d0, d1, d2);
+        }
+        com.github.alexthe666.citadel.animation.AnimationHandler.INSTANCE.updateAnimations(this);
+    }
+
+    @Override
+    public void addAdditionalSaveData(CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
+        compound.putInt("MinionCount", this.getMinionCount());
+    }
+
+    @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-
+        this.setMinionCount(compound.getInt("MinionCount"));
         if (this.hasCustomName()) {
             this.bossInfo.setName(this.getDisplayName());
         }
+        this.setCombatTask();
     }
     public int getMinionCount() {
         return this.entityData.get(MINION_COUNT).intValue();
@@ -259,7 +300,10 @@ public class EntityDreadQueen extends EntityDreadMob implements IAnimatedEntity,
 
     private Mob getRandomNewMinion() {
         float chance = random.nextFloat();
-        if (chance > 0.5F) {
+        if (chance > 0.85F) {
+            // Dread Queen can summon liches - they become her lieutenants
+            return new EntityDreadLich(IafEntityRegistry.DREAD_LICH.get(), level);
+        } else if (chance > 0.5F) {
             return new EntityDreadThrall(IafEntityRegistry.DREAD_THRALL.get(), level);
         } else if (chance > 0.35F) {
             return new EntityDreadGhoul(IafEntityRegistry.DREAD_GHOUL.get(), level);
@@ -272,7 +316,7 @@ public class EntityDreadQueen extends EntityDreadMob implements IAnimatedEntity,
 
     @Override
     public boolean isAlliedTo(Entity entityIn) {
-        return entityIn instanceof IDreadMob || super.isAlliedTo(entityIn);
+        return entityIn instanceof IDreadMob || entityIn instanceof EntityBlackFrost || super.isAlliedTo(entityIn);
     }
 
     @Override
