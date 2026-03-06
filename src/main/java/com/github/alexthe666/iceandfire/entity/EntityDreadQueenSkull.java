@@ -1,12 +1,14 @@
 package com.github.alexthe666.iceandfire.entity;
 
 import com.github.alexthe666.iceandfire.IceAndFire;
+import com.github.alexthe666.iceandfire.entity.util.IDreadMob;
 import com.github.alexthe666.iceandfire.enums.EnumParticles;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
@@ -144,6 +146,10 @@ public class EntityDreadQueenSkull extends AbstractArrow {
                 if (shootingEntity != null && entity.isAlliedTo(shootingEntity)) {
                     return;
                 }
+
+                if (entity instanceof IDreadMob) {
+                    return;
+                }
             }
         }
         super.onHitEntity(raytraceResultIn);
@@ -154,6 +160,15 @@ public class EntityDreadQueenSkull extends AbstractArrow {
         super.doPostHurtEffects(living);
         Entity shootingEntity = this.getOwner();
         if (living != null && (shootingEntity == null || !living.is(shootingEntity))) {
+
+            if (living instanceof IDreadMob) {
+                return;
+            }
+            living.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                    net.minecraft.world.effect.MobEffects.WITHER, 50, 1)); // 2.5 seconds, level II
+            living.addEffect(new net.minecraft.world.effect.MobEffectInstance(
+                    net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, 100, 0)); // 3 seconds, level I
+
             if (living instanceof Player) {
                 this.damageShield((Player) living, (float) this.getBaseDamage());
             }
