@@ -6,6 +6,7 @@ import com.github.alexthe666.iceandfire.IafConfig;
 import com.github.alexthe666.iceandfire.IceAndFire;
 import com.github.alexthe666.iceandfire.api.event.DragonFireEvent;
 import com.github.alexthe666.iceandfire.entity.util.DragonUtils;
+import com.github.alexthe666.iceandfire.entity.util.IDreadMob;
 import com.github.alexthe666.iceandfire.enums.EnumParticles;
 import com.github.alexthe666.iceandfire.item.IafItemRegistry;
 import com.github.alexthe666.iceandfire.message.MessageDragonSyncFire;
@@ -13,6 +14,8 @@ import com.github.alexthe666.iceandfire.misc.IafSoundRegistry;
 import com.github.alexthe666.iceandfire.misc.IafTagRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -22,6 +25,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.WaterAnimal;
@@ -38,11 +42,13 @@ import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 
-import static com.github.alexthe666.iceandfire.entity.EntityIceDragon.FEMALE_LOOT;
+public class EntityBlackFrost extends EntityDragonBase implements IDreadMob{
 
-public class EntityBlackFrost extends EntityDragonBase {
+    private static final EntityDataAccessor<Optional<UUID>> COMMANDER_UNIQUE_ID = SynchedEntityData.defineId(EntityBlackFrost.class, net.minecraft.network.syncher.EntityDataSerializers.OPTIONAL_UUID);
 
     public static final float[] growth_stage_1 = new float[]{20F, 30F};
     public static final float[] growth_stage_2 = new float[]{20F, 30F};
@@ -50,8 +56,8 @@ public class EntityBlackFrost extends EntityDragonBase {
     public static final float[] growth_stage_4 = new float[]{20F, 30F};
     public static final float[] growth_stage_5 = new float[]{20F, 30F};
     // TODO: Change to black frost loot once added
-    public static final ResourceLocation FEMALE_LOOT = new ResourceLocation("iceandfire", "entities/dragon/ice_dragon_female");
-    public static final ResourceLocation SKELETON_LOOT = new ResourceLocation("iceandfire", "entities/dragon/ice_dragon_skeleton");
+    public static final ResourceLocation BLACK_FROST_LOOT = new ResourceLocation("iceandfire", "entities/dragon/black_frost");
+    public static final ResourceLocation BLACK_FROST_SKELETON_LOOT = new ResourceLocation("iceandfire", "entities/dragon/black_frost_skeleton");
 
     public EntityBlackFrost(Level worldIn) {
         this(IafEntityRegistry.BLACK_FROST.get(), worldIn);
@@ -74,6 +80,41 @@ public class EntityBlackFrost extends EntityDragonBase {
     }
 
     @Override
+    public void performRangedAttack(LivingEntity target, float distanceFactor) {
+        // No ranged attack for black frost, but still need to implement the method for the interface
+    }
+    @Override
+    public Entity getCommander() {
+        try {
+            UUID uuid = this.getCommanderId();
+            if (uuid == null) return null;
+            LivingEntity player = this.level.getPlayerByUUID(uuid);
+            if (player != null) {
+                return player;
+            } else {
+                if (!level.isClientSide) {
+                    Entity entity = level.getServer().getLevel(this.level.dimension()).getEntity(uuid);
+                    if (entity instanceof LivingEntity) {
+                        return entity;
+                    }
+                }
+            }
+        } catch (IllegalArgumentException var2) {
+            return null;
+        }
+        return null;
+    }
+
+    @Nullable
+    public UUID getCommanderId() {
+        return this.entityData.get(COMMANDER_UNIQUE_ID).orElse(null);
+    }
+
+    public void setCommanderId(@Nullable UUID uuid) {
+        this.entityData.set(COMMANDER_UNIQUE_ID, Optional.ofNullable(uuid));
+    }
+
+    @Override
     public void setGender(boolean male) {
             super.setGender(false); // force female
     }
@@ -83,15 +124,27 @@ public class EntityBlackFrost extends EntityDragonBase {
         if (entity instanceof EntityDragonBase && !this.isTame()) {
             return entity.getType() != this.getType() && this.getBbWidth() >= entity.getBbWidth() && !((EntityDragonBase) entity).isMobDead();
         }
+        if (entity instanceof IDreadMob) {
+            return false;
+        }
         // TODO: Change to black frost targets when those are added
         return entity instanceof Player || DragonUtils.isDragonTargetable(entity, IafTagRegistry.ICE_DRAGON_TARGETS) || entity instanceof WaterAnimal || !this.isTame() && DragonUtils.isVillager(entity);
     }
 
+    @Override
+    // Black Frost allied to dread mobs
+    public boolean isAlliedTo(@NotNull Entity entityIn) {
+        if (entityIn instanceof IDreadMob || entityIn instanceof EntityBlackFrost) {
+            return true;
+        }
+        return super.isAlliedTo(entityIn);
+    }
 
     @Override
     protected void defineSynchedData() {
         super.defineSynchedData();
         this.entityData.define(SWIMMING, Boolean.FALSE);
+        this.entityData.define(COMMANDER_UNIQUE_ID, Optional.empty());
     }
     // TODO: Change to black frost variants when those are added
     @Override
@@ -126,6 +179,9 @@ public class EntityBlackFrost extends EntityDragonBase {
         super.addAdditionalSaveData(compound);
         compound.putBoolean("Swimming", this.isSwimming());
         compound.putInt("SwimmingTicks", this.ticksSwiming);
+        if (this.getCommanderId() != null) {
+            compound.putUUID("CommanderUUID", this.getCommanderId());
+        }
     }
 
     @Override
@@ -134,6 +190,12 @@ public class EntityBlackFrost extends EntityDragonBase {
         this.setSwimming(compound.getBoolean("Swimming"));
         this.ticksSwiming = compound.getInt("SwimmingTicks");
         this.setGender(true);
+        if (compound.hasUUID("CommanderUUID")) {
+            try {
+                this.setCommanderId(compound.getUUID("CommanderUUID"));
+            } catch (Throwable ignored) {
+            }
+        }
     }
 
     @Override
@@ -188,6 +250,16 @@ public class EntityBlackFrost extends EntityDragonBase {
     @Override
     public void aiStep() {
         super.aiStep();
+        // Follow Dread Queen commander's target
+        if (!level.isClientSide) {
+            Entity commander = this.getCommander();
+            if (commander instanceof Mob mobCommander) {
+                LivingEntity commanderTarget = mobCommander.getTarget();
+                if (commanderTarget != null && commanderTarget.isAlive() && !(commanderTarget instanceof IDreadMob)) {
+                    this.setTarget(commanderTarget);
+                }
+            }
+        }
         LivingEntity attackTarget = this.getTarget();
         if (!level.isClientSide && this.isInLava() && this.isAllowedToTriggerFlight() && !this.isModelDead()) {
             this.setHovering(true);
@@ -442,9 +514,9 @@ public class EntityBlackFrost extends EntityDragonBase {
     @Override
     public ResourceLocation getDeadLootTable() {
         if (this.getDeathStage() >= (this.getAgeInDays() / 5) / 2) {
-            return SKELETON_LOOT;
+            return BLACK_FROST_SKELETON_LOOT;
         } else {
-            return FEMALE_LOOT;
+            return BLACK_FROST_LOOT;
         }
     }
 
