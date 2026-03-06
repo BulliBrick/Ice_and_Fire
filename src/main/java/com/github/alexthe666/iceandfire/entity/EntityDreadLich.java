@@ -129,27 +129,20 @@ public class EntityDreadLich extends EntityDreadMob implements IAnimatedEntity, 
 
         StructureFeatureManager structureManager = serverLevel.structureFeatureManager();
 
-        // Tier 1: Check if pos is directly inside a mausoleum structure
-        // getStructureAt returns StructureStart.INVALID_START if not inside any instance
-        // of the given structure. This is very cheap — it reads from chunk structure data.
         try {
             ConfiguredStructureFeature<?, ?> mausoleumCF = IafWorldRegistry.MAUSOLEUM_CF.value();
             StructureStart structureStart = structureManager.getStructureAt(pos, mausoleumCF);
             if (structureStart.isValid()) {
-                return true;
+                // Spawn pos is INSIDE the mausoleum — reject it.
+                // Interior spawns are handled by DREAD_SPAWNER blocks already.
+                return false;
             }
         } catch (Exception e) {
-            // MAUSOLEUM_CF might not be initialized in edge cases (e.g. mod loading order)
-            // Fall through to block scan
             IceAndFire.LOGGER.debug("Mausoleum structure check failed, falling back to block scan", e);
         }
 
-        // Tier 2: Targeted block scan with reduced radius
-        // Only scan if the spawn chunk or adjacent chunks could plausibly contain a mausoleum.
-        //
-        // Scan a 17x9x17 volume (8 blocks horizontal, 4 vertical) = 2,601 positions
-        // This is ~7x cheaper than the original 33x17x33 scan.
-        // Mausoleums are compact jigsaw structures, so 8 blocks is sufficient for "nearby" spawning.
+        // Pos is outside the structure — check if a DREAD_SPAWNER is nearby
+        // (meaning we're in the perimeter/surroundings of a mausoleum)
         for (BlockPos checkPos : BlockPos.betweenClosed(pos.offset(-8, -4, -8), pos.offset(8, 4, 8))) {
             if (worldIn.getBlockState(checkPos).getBlock() == IafBlockRegistry.DREAD_SPAWNER.get()) {
                 return true;
