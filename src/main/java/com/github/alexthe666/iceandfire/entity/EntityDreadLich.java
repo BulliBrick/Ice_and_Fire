@@ -15,7 +15,6 @@ import com.github.alexthe666.iceandfire.entity.util.IVillagerFear;
 import com.github.alexthe666.iceandfire.enums.EnumParticles;
 import com.github.alexthe666.iceandfire.item.IafItemRegistry;
 import com.github.alexthe666.iceandfire.misc.IafSoundRegistry;
-import com.github.alexthe666.iceandfire.world.IafWorldRegistry;
 import com.google.common.base.Predicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
@@ -67,39 +66,60 @@ public class EntityDreadLich extends EntityDreadMob implements IAnimatedEntity, 
         super(type, worldIn);
     }
 
-    public static boolean canLichSpawnOn(EntityType<? extends Mob> typeIn, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, Random randomIn) {
+    public static boolean canLichSpawnOn(EntityType<? extends Mob> typeIn, ServerLevelAccessor worldIn, MobSpawnType reason, BlockPos pos, Random randomIn) {
+        // Always allow spawner-based spawning
         if (reason == MobSpawnType.SPAWNER) {
             BlockPos blockpos = pos.below();
             return worldIn.getBlockState(blockpos).isValidSpawn(worldIn, blockpos, typeIn);
         }
+
         // Natural spawning: must be nighttime
         if (worldIn instanceof Level level) {
             if (level.isDay()) {
                 return false;
             }
         }
+
+        // Valid ground check
         BlockPos blockpos = pos.below();
         if (!worldIn.getBlockState(blockpos).isValidSpawn(worldIn, blockpos, typeIn)) {
             return false;
         }
+
         // Check if biome is cold (temperature < 0.5)
         float temperature = worldIn.getBiome(pos).value().getBaseTemperature();
-        boolean isColdBiome = temperature < 0.5F;
-
-        if (!isColdBiome) {
+        if (temperature >= 0.5F) {
             return false;
         }
-        // Higher chance near mausoleums (dread ruins), lower chance otherwise
-        // Check for nearby dread stone blocks as a proxy for mausoleum proximity
+
+        // Check for nearby dread spawner blocks (mausoleum proximity)
+        // Spawners are on the perimeter of the mausoleum structure
         boolean nearMausoleum = false;
-        for (BlockPos checkPos : BlockPos.betweenClosed(pos.offset(-32, -16, -32), pos.offset(32, 16, 32))) {
+        for (BlockPos checkPos : BlockPos.betweenClosed(pos.offset(-16, -8, -16), pos.offset(16, 8, 16))) {
             if (worldIn.getBlockState(checkPos).getBlock() == IafBlockRegistry.DREAD_SPAWNER.get()) {
                 nearMausoleum = true;
                 break;
             }
         }
-        int spawnChance = nearMausoleum ? IafConfig.lichSpawnChance : IafConfig.lichSpawnChance * 5;
-        return randomIn.nextInt(spawnChance) == 0;
+
+        // Near mausoleum: always allow spawn (biome + night already verified)
+        // In cold biome without mausoleum: apply additional random chance
+        if (!nearMausoleum) {
+            if (randomIn.nextInt(IafConfig.lichSpawnChance) != 0) {
+                return false;
+            }
+        }
+
+        IceAndFire.LOGGER.debug("Dread Lich SPAWNING at {} (nearMausoleum={})", pos, nearMausoleum);
+        return true;
+    }
+
+    // Override Monster's checkSpawnRules which requires isDarkEnoughToSpawn.
+    // Liches are undead necromancers that spawn at night in cold biomes regardless of light level.
+    // The nighttime + cold biome checks are already enforced in canLichSpawnOn above.
+    @Override
+    public boolean checkSpawnRules(@NotNull LevelAccessor worldIn, @NotNull MobSpawnType spawnReasonIn) {
+        return true;
     }
 
 

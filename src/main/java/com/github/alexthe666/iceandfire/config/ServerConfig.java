@@ -347,7 +347,7 @@ public class ServerConfig {
         builder.pop();
         builder.push("Others");
         this.spawnLiches = buildBoolean(builder, "Spawn Liches", "all", true, "True if dread liches are allowed to spawn");
-        this.lichSpawnRate = buildInt(builder, "Lich Spawn Weight", "all", 2, 1, 10000, "Dread Lich spawn weight. Lower = lower chance to spawn");
+        this.lichSpawnRate = buildInt(builder, "Lich Spawn Weight", "all", 6, 1, 10000, "Dread Lich spawn weight. Higher = more spawn attempts");
         this.lichSpawnChance = buildInt(builder, "Lich Spawn Chance", "all", 30, 1, 10000, "Dread Lich spawn chance. Lower = higher chance to spawn");
 
         this.hydraMaxHealth = buildDouble(builder, "Hydra Max Health", "all", 250, 1, 10000, "Maximum hydra health");
