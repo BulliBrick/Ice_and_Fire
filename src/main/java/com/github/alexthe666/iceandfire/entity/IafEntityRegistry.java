@@ -162,7 +162,7 @@ public class IafEntityRegistry {
             spawners.getSpawner(MobCategory.CREATURE).add(new MobSpawnSettings.SpawnerData(IafEntityRegistry.HIPPOGRYPH.get(), IafConfig.hippogryphSpawnRate, 1, 1));
             LOADED_ENTITIES.put("HIPPOGRYPH", true);
         }
-        if (IafConfig.spawnLiches && BiomeConfig.test(BiomeConfig.mausoleumBiomes, biomeHolder)) {
+        if (IafConfig.spawnLiches && BiomeConfig.test(BiomeConfig.dreadLichBiomes, biomeHolder)) {
             spawners.getSpawner(MobCategory.MONSTER).add(new MobSpawnSettings.SpawnerData(IafEntityRegistry.DREAD_LICH.get(), IafConfig.lichSpawnRate, 1, 1));
             LOADED_ENTITIES.put("DREAD_LICH", true);
         }

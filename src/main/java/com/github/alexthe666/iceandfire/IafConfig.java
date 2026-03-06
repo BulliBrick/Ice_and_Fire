@@ -142,7 +142,7 @@ public class IafConfig {
     public static boolean generateMausoleums = true;
     public static int generateMausoleumChance = 30;
     public static boolean spawnLiches = true;
-    public static int lichSpawnRate = 4;
+    public static int lichSpawnRate = 2;
     public static int lichSpawnChance = 30;
     public static double hydraMaxHealth = 250D;
     public static boolean generateHydraCaves = true;
@@ -169,6 +169,7 @@ public class IafConfig {
     public static boolean dragonWeaponLightningAbility = true;
     public static int villagerHouseWeight = 5;
     public static boolean allowAttributeOverriding = true;
+
 
     public static void bakeClient(final ModConfig config) {
         try {

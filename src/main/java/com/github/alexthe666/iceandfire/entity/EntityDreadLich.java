@@ -5,6 +5,7 @@ import com.github.alexthe666.citadel.animation.AnimationHandler;
 import com.github.alexthe666.citadel.animation.IAnimatedEntity;
 import com.github.alexthe666.iceandfire.IafConfig;
 import com.github.alexthe666.iceandfire.IceAndFire;
+import com.github.alexthe666.iceandfire.block.IafBlockRegistry;
 import com.github.alexthe666.iceandfire.entity.ai.DreadAITargetNonDread;
 import com.github.alexthe666.iceandfire.entity.ai.DreadLichAIStrife;
 import com.github.alexthe666.iceandfire.entity.util.DragonUtils;
@@ -67,9 +68,40 @@ public class EntityDreadLich extends EntityDreadMob implements IAnimatedEntity, 
     }
 
     public static boolean canLichSpawnOn(EntityType<? extends Mob> typeIn, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, Random randomIn) {
+        if (reason == MobSpawnType.SPAWNER) {
+            BlockPos blockpos = pos.below();
+            return worldIn.getBlockState(blockpos).isValidSpawn(worldIn, blockpos, typeIn);
+        }
+        // Natural spawning: must be nighttime
+        if (worldIn instanceof Level level) {
+            if (level.isDay()) {
+                return false;
+            }
+        }
         BlockPos blockpos = pos.below();
-        return reason == MobSpawnType.SPAWNER || worldIn.getBlockState(blockpos).isValidSpawn(worldIn, blockpos, typeIn) && randomIn.nextInt(IafConfig.lichSpawnChance) == 0;
+        if (!worldIn.getBlockState(blockpos).isValidSpawn(worldIn, blockpos, typeIn)) {
+            return false;
+        }
+        // Check if biome is cold (temperature < 0.5)
+        float temperature = worldIn.getBiome(pos).value().getBaseTemperature();
+        boolean isColdBiome = temperature < 0.5F;
+
+        if (!isColdBiome) {
+            return false;
+        }
+        // Higher chance near mausoleums (dread ruins), lower chance otherwise
+        // Check for nearby dread stone blocks as a proxy for mausoleum proximity
+        boolean nearMausoleum = false;
+        for (BlockPos checkPos : BlockPos.betweenClosed(pos.offset(-32, -16, -32), pos.offset(32, 16, 32))) {
+            if (worldIn.getBlockState(checkPos).getBlock() == IafBlockRegistry.DREAD_SPAWNER.get()) {
+                nearMausoleum = true;
+                break;
+            }
+        }
+        int spawnChance = nearMausoleum ? IafConfig.lichSpawnChance : IafConfig.lichSpawnChance * 5;
+        return randomIn.nextInt(spawnChance) == 0;
     }
+
 
     @Override
     protected void registerGoals() {

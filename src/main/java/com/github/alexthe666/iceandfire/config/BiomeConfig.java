@@ -60,6 +60,7 @@ public class BiomeConfig {
     public static Pair<String, IafSpawnBiomeData> creamyHippogryphBiomes = Pair.of("iceandfire:hippogryph_creamy_biomes", DefaultBiomes.HIPPOGRYPH_CREAMY);
     public static Pair<String, IafSpawnBiomeData> darkBrownHippogryphBiomes = Pair.of("iceandfire:hippogryph_dark_brown_biomes", DefaultBiomes.HIPPOGRYPH_DARK_BROWN);
     public static Pair<String, IafSpawnBiomeData> whiteHippogryphBiomes = Pair.of("iceandfire:hippogryph_white_biomes", DefaultBiomes.HIPPOGRYPH_WHITE);
+    public static Pair<String, IafSpawnBiomeData> dreadLichBiomes = Pair.of("iceandfire:dread_lich_biomes", DefaultBiomes.SNOWY);
 
     private static boolean init = false;
     private static final Map<String, IafSpawnBiomeData> biomeConfigValues = new HashMap<>();
