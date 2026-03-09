@@ -142,8 +142,8 @@ public class IafConfig {
     public static boolean generateMausoleums = true;
     public static int generateMausoleumChance = 30;
     public static boolean spawnLiches = true;
-    public static int lichSpawnRate = 6;
-    public static int lichSpawnChance = 30;
+    public static int lichSpawnRate = 200;
+    public static int lichSpawnChance = 1;
     public static double hydraMaxHealth = 250D;
     public static boolean generateHydraCaves = true;
     public static int generateHydraChance = 120;

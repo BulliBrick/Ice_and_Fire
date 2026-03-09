@@ -73,6 +73,8 @@ public class EntityDreadLich extends EntityDreadMob implements IAnimatedEntity, 
     }
 
     public static boolean canLichSpawnOn(EntityType<? extends Mob> typeIn, ServerLevelAccessor worldIn, MobSpawnType reason, BlockPos pos, Random randomIn) {
+        IceAndFire.LOGGER.info("canLichSpawnOn CALLED at {} reason={}", pos, reason);
+
         // Always allow spawner-based spawning (e.g. from DREAD_SPAWNER blocks)
         if (reason == MobSpawnType.SPAWNER) {
             BlockPos blockpos = pos.below();

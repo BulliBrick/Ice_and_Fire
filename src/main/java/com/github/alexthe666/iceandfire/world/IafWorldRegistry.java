@@ -89,6 +89,7 @@ public class IafWorldRegistry {
     public static final RegistryObject<Feature<NoneFeatureConfiguration>> SPAWN_SEA_SERPENT;
     public static final RegistryObject<Feature<NoneFeatureConfiguration>> SPAWN_STYMPHALIAN_BIRD;
     public static final RegistryObject<Feature<NoneFeatureConfiguration>> SPAWN_WANDERING_CYCLOPS;
+    public static final RegistryObject<Feature<NoneFeatureConfiguration>> SPAWN_DREAD_LICH;
 
     //public static final RegistryObject<StructureFeature<JigsawConfiguration>> MAUSOLEUM =
     //        STRUCTURES.register("mausoleum", DreadMausoleumStructure::new);
@@ -144,6 +145,7 @@ public class IafWorldRegistry {
     public static Holder<ConfiguredStructureFeature<?, ?>> GORGON_TEMPLE_CF;
     public static Holder<ConfiguredStructureFeature<?, ?>> MAUSOLEUM_CF;
     public static Holder<ConfiguredStructureFeature<?, ?>> GRAVEYARD_CF;
+    public static Holder<PlacedFeature> SPAWN_DREAD_LICH_CF;
 
     static {
         FIRE_DRAGON_ROOST = register("fire_dragon_roost", () -> new WorldGenFireDragonRoosts(NoneFeatureConfiguration.CODEC));
@@ -176,6 +178,8 @@ public class IafWorldRegistry {
                 () -> new SpawnStymphalianBird(NoneFeatureConfiguration.CODEC));
         SPAWN_WANDERING_CYCLOPS = register("spawn_wandering_cyclops",
                 () -> new SpawnWanderingCyclops(NoneFeatureConfiguration.CODEC));
+        SPAWN_DREAD_LICH = register("spawn_dread_lich", () -> new SpawnDreadLich(NoneFeatureConfiguration.CODEC));
+
     }
 
     private static <C extends FeatureConfiguration, F extends Feature<C>> RegistryObject<F> register(final String name, final Supplier<? extends F> supplier) {
@@ -270,6 +274,7 @@ public class IafWorldRegistry {
         SPAWN_SEA_SERPENT_CF = registerSimple.apply("spawn_sea_serpent_misc", SPAWN_SEA_SERPENT.get());
         SPAWN_STYMPHALIAN_BIRD_CF = registerSimple.apply("spawn_stymphalian_bird_misc", SPAWN_STYMPHALIAN_BIRD.get());
         SPAWN_WANDERING_CYCLOPS_CF = registerSimple.apply("spawn_wandering_cyclops_misc", SPAWN_WANDERING_CYCLOPS.get());
+        SPAWN_DREAD_LICH_CF = registerSimple.apply("spawndread_lich_misc", SPAWN_DREAD_LICH.get());
 
 
     }
@@ -355,6 +360,7 @@ public class IafWorldRegistry {
         LOADED_FEATURES.put("SPAWN_SEA_SERPENT_CF", false);
         LOADED_FEATURES.put("SPAWN_STYMPHALIAN_BIRD_CF", false);
         LOADED_FEATURES.put("SPAWN_WANDERING_CYCLOPS_CF", false);
+        LOADED_FEATURES.put("SPAWN_DREAD_LICH_CF", false);
     }
 
     public static Set<BiomeGenerationSettings> processed = new HashSet();
@@ -487,6 +493,10 @@ public class IafWorldRegistry {
             LOADED_FEATURES.put("SPAWN_STYMPHALIAN_BIRD_CF", true);
         }
 
+        if (IafConfig.spawnLiches && safelyTestBiome(BiomeConfig.dreadLichBiomes, biomeHolder)) {
+            generator.addFeature(GenerationStep.Decoration.SURFACE_STRUCTURES, SPAWN_DREAD_LICH_CF);
+            LOADED_FEATURES.put("SPAWN_DREAD_LICH_CF", true);
+        }
         biomeHolder.value().generationSettings = generator.build();
         processed.add(biomeHolder.value().generationSettings);
     }
