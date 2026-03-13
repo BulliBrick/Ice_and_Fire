@@ -103,7 +103,6 @@ public class IceAndFire {
         modLoadingContext.registerConfig(ModConfig.Type.CLIENT, ConfigHolder.CLIENT_SPEC);
         modLoadingContext.registerConfig(ModConfig.Type.COMMON, ConfigHolder.SERVER_SPEC);
         PROXY.init();
-        IafDimensionRegistry.register();
 
 
         MinecraftForge.EVENT_BUS.addListener(this::onServerStarted);
@@ -217,6 +216,7 @@ public class IceAndFire {
             PROXY.setup();
             IafVillagerRegistry.setup();
             IafLootRegistry.init();
+            IafDimensionRegistry.register();
         });
     }
 
