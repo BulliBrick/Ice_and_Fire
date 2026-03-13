@@ -1,0 +1,36 @@
+{
+  "temperature": -0.4,
+  "downfall": 0.1,
+  "precipitation": "snow",
+  "effects": {
+    "sky_color": 1447446,
+    "fog_color": 1447446,
+    "water_color": 1710618,
+    "water_fog_color": 855309,
+    "grass_color": 4211012,
+    "foliage_color": 4211012,
+    "mood_sound": {
+      "sound": "minecraft:ambient.basalt_deltas.mood",
+      "tick_delay": 6000,
+      "block_search_extent": 8,
+      "offset": 2
+    },
+    "ambient_sound": "minecraft:ambient.basalt_deltas.loop"
+  },
+  "spawners": {},
+  "spawn_costs": {},
+  "carvers": {},
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    []
+  ]
+}

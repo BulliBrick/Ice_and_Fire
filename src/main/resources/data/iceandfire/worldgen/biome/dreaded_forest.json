@@ -1,0 +1,40 @@
+{
+  "temperature": -0.3,
+  "downfall": 0.6,
+  "precipitation": "snow",
+  "effects": {
+    "sky_color": 1579032,
+    "fog_color": 1842204,
+    "water_color": 2168164,
+    "water_fog_color": 1118481,
+    "grass_color": 3685677,
+    "foliage_color": 3685677,
+    "mood_sound": {
+      "sound": "minecraft:ambient.warped_forest.mood",
+      "tick_delay": 6000,
+      "block_search_extent": 8,
+      "offset": 2
+    },
+    "additions_sound": {
+      "sound": "minecraft:ambient.warped_forest.additions",
+      "tick_chance": 0.0111
+    },
+    "ambient_sound": "minecraft:ambient.warped_forest.loop"
+  },
+  "spawners": {},
+  "spawn_costs": {},
+  "carvers": {},
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    []
+  ]
+}

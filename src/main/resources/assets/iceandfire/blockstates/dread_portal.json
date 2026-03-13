@@ -1,6 +1,9 @@
 {
   "variants": {
-    "": {
+    "active=true": {
+      "model": "iceandfire:block/dread_portal"
+    },
+    "active=false": {
       "model": "iceandfire:block/dread_portal"
     }
   }

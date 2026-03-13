@@ -1,0 +1,36 @@
+{
+  "temperature": -1.0,
+  "downfall": 0.8,
+  "precipitation": "snow",
+  "effects": {
+    "sky_color": 2236962,
+    "fog_color": 2500134,
+    "water_color": 2631935,
+    "water_fog_color": 1710618,
+    "grass_color": 5461382,
+    "foliage_color": 5461382,
+    "mood_sound": {
+      "sound": "minecraft:ambient.soul_sand_valley.mood",
+      "tick_delay": 8000,
+      "block_search_extent": 8,
+      "offset": 2.0
+    },
+    "ambient_sound": "minecraft:ambient.soul_sand_valley.loop"
+  },
+  "spawners": {},
+  "spawn_costs": {},
+  "carvers": {},
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    []
+  ]
+}

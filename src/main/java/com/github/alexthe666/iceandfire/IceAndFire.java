@@ -51,6 +51,9 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import com.github.alexthe666.iceandfire.world.dimension.IafDimensionRegistry;
+import com.github.alexthe666.iceandfire.world.dimension.DreadlandsCommand;
+
 
 @Mod(IceAndFire.MODID)
 @Mod.EventBusSubscriber(modid = IceAndFire.MODID)
@@ -100,8 +103,13 @@ public class IceAndFire {
         modLoadingContext.registerConfig(ModConfig.Type.CLIENT, ConfigHolder.CLIENT_SPEC);
         modLoadingContext.registerConfig(ModConfig.Type.COMMON, ConfigHolder.SERVER_SPEC);
         PROXY.init();
+        IafDimensionRegistry.register();
+
 
         MinecraftForge.EVENT_BUS.addListener(this::onServerStarted);
+        MinecraftForge.EVENT_BUS.addListener(
+                (net.minecraftforge.event.RegisterCommandsEvent event) ->
+                        DreadlandsCommand.register(event.getDispatcher()));
 
         modBus.addGenericListener(StructureFeature.class, EventPriority.LOW,
             (final RegistryEvent.Register<StructureFeature<?>> event) -> IafWorldRegistry
