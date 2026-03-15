@@ -31,7 +31,7 @@ public class DreadlandsBiomeSource extends BiomeSource {
     public static final ResourceKey<Biome> DREADED_SPIKES =
             ResourceKey.create(Registry.BIOME_REGISTRY, new ResourceLocation(IceAndFire.MODID, "dreaded_spikes"));
     public static final ResourceKey<Biome> DREAD_DEAD_FOREST =
-            ResourceKey.create(Registry.BIOME_REGISTRY, new ResourceLocation(IceAndFire.MODID, "dread_dead_forest"));
+            ResourceKey.create(Registry.BIOME_REGISTRY, new ResourceLocation(IceAndFire.MODID, "dreaded_forest"));
     public static final ResourceKey<Biome> FROZEN_DREAD_PLAINS =
             ResourceKey.create(Registry.BIOME_REGISTRY, new ResourceLocation(IceAndFire.MODID, "frozen_dread_plains"));
     public static final ResourceKey<Biome> DREAD_CRAGS =
