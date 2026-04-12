@@ -11,13 +11,16 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate;
+import net.minecraft.world.level.levelgen.LegacyRandomSource;
+import net.minecraft.world.level.levelgen.WorldgenRandom;
+import net.minecraft.world.level.levelgen.synth.PerlinSimplexNoise;
 
 import java.util.List;
 
 /**
  * Custom BiomeSource for the Dreadlands dimension.
  *
- * Distributes 5 biomes using two noise channels to create organic, large-scale regions:
+ * Distributes 5 biomes using two Perlin noise channels (seeded) for organic regions:
  *   - Dreadlands Wastes (default, ~35%)
  *   - Dreaded Spikes (~15%)
  *   - Dread Dead Forest (~20%)
@@ -51,6 +54,11 @@ public class DreadlandsBiomeSource extends BiomeSource {
     private final Holder<Biome> frozenHolder;
     private final Holder<Biome> cragsHolder;
 
+    // Seed-aware noise for biome distribution
+    private PerlinSimplexNoise biomeNoise1;
+    private PerlinSimplexNoise biomeNoise2;
+    private boolean noiseReady = false;
+
     public DreadlandsBiomeSource(Registry<Biome> biomeRegistry) {
         super(List.of(
                 biomeRegistry.getHolderOrThrow(DREADLANDS_WASTES),
@@ -67,6 +75,26 @@ public class DreadlandsBiomeSource extends BiomeSource {
         this.cragsHolder = biomeRegistry.getHolderOrThrow(DREAD_CRAGS);
     }
 
+    /**
+     * Lazily initializes biome noise. Called on first biome query.
+     * Uses a fixed biome-layer seed offset so biome layout is consistent
+     * but still depends on the world seed passed through withSeed → initNoise.
+     */
+    private synchronized void ensureNoise(long seed) {
+        if (noiseReady) return;
+        biomeNoise1 = new PerlinSimplexNoise(
+                new WorldgenRandom(new LegacyRandomSource(seed + 77777L)), List.of(-2, -1, 0));
+        biomeNoise2 = new PerlinSimplexNoise(
+                new WorldgenRandom(new LegacyRandomSource(seed + 88888L)), List.of(-2, -1, 0));
+        noiseReady = true;
+    }
+
+    /** Called by the chunk generator once the world seed is known. */
+    public void initSeed(long seed) {
+        noiseReady = false;
+        ensureNoise(seed);
+    }
+
     @Override
     protected Codec<? extends BiomeSource> codec() {
         return CODEC;
@@ -81,46 +109,42 @@ public class DreadlandsBiomeSource extends BiomeSource {
      * Called by the chunk generator to determine the biome at biome coordinates.
      * Biome coordinates are block coordinates >> 2 (divided by 4).
      *
-     * Two independent noise channels with large scale for big biome patches:
-     *   noise1 high + noise2 high  → Frozen Dread Plains (cold + wet = heavy snow)
-     *   noise1 high + noise2 low   → Dreaded Spikes (cold + dry = exposed rock/ice)
-     *   noise1 low  + noise2 high  → Dread Dead Forest (warmer + wet = growth)
-     *   noise1 low  + noise2 low   → Dread Crags (warmer + dry = rocky)
+     * Two independent Perlin noise channels at biome scale (~400 blocks):
+     *   noise1 high + noise2 high  → Frozen Dread Plains (cold + wet)
+     *   noise1 high + noise2 low   → Dreaded Spikes (cold + dry)
+     *   noise1 low  + noise2 high  → Dread Dead Forest (warmer + wet)
+     *   noise1 low  + noise2 low   → Dread Crags (warmer + dry)
      *   middle range               → Dreadlands Wastes (default)
      */
     @Override
     public Holder<Biome> getNoiseBiome(int biomeX, int biomeY, int biomeZ, Climate.Sampler sampler) {
+        // Lazy init with seed 0 as fallback — will be re-initialized with real seed
+        // once the chunk generator calls initSeed()
+        ensureNoise(0L);
+
         double x = biomeX * 4.0;
         double z = biomeZ * 4.0;
 
-        double noise1 = biomeNoise(x / 350.0, z / 350.0, 0);
-        double noise2 = biomeNoise(x / 350.0, z / 350.0, 31337);
+        // Scale of ~400 blocks per biome region, 3 octaves for organic edges
+        double n1 = biomeNoise1.getValue(x / 400.0, z / 400.0, false);
+        double n2 = biomeNoise2.getValue(x / 400.0, z / 400.0, false);
 
-        // Wastes occupies the center band
-        if (Math.abs(noise1) < 0.3 && Math.abs(noise2) < 0.3) {
+        // Wastes occupies the center band — both noise channels near zero
+        if (Math.abs(n1) < 0.25 && Math.abs(n2) < 0.25) {
             return wastesHolder;
         }
 
-        // Quadrant selection
-        if (noise1 > 0.3) {
-            if (noise2 > 0.2) return frozenHolder;
-            if (noise2 < -0.2) return spikesHolder;
-        } else if (noise1 < -0.3) {
-            if (noise2 > 0.2) return forestHolder;
-            if (noise2 < -0.2) return cragsHolder;
+        // Quadrant selection with asymmetric thresholds to prevent
+        // too much wastes at the edges
+        if (n1 > 0.25) {
+            if (n2 > 0.15) return frozenHolder;    // cold + wet
+            if (n2 < -0.15) return spikesHolder;   // cold + dry
+        } else if (n1 < -0.25) {
+            if (n2 > 0.15) return forestHolder;     // warm + wet
+            if (n2 < -0.15) return cragsHolder;     // warm + dry
         }
 
+        // Edge cases between quadrants → wastes
         return wastesHolder;
-    }
-
-    /**
-     * Deterministic noise using sine mixing. Cheap, good enough for biome-scale.
-     */
-    private static double biomeNoise(double x, double z, long seedOffset) {
-        double v = 0;
-        v += Math.sin(x * 1.0 + seedOffset * 0.1) * Math.cos(z * 1.3 + seedOffset * 0.07) * 0.5;
-        v += Math.sin(x * 2.3 + z * 1.7 + seedOffset * 0.13) * 0.3;
-        v += Math.cos(x * 0.7 - z * 2.1 + seedOffset * 0.17) * 0.2;
-        return Math.max(-1.0, Math.min(1.0, v));
     }
 }

@@ -7,13 +7,13 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.level.WorldGenRegion;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.NoiseColumn;
 import net.minecraft.world.level.StructureFeatureManager;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.biome.Climate;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -30,7 +30,6 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.stream.IntStream;
 
 import static com.github.alexthe666.iceandfire.world.dimension.DreadlandsBlocks.*;
 
@@ -100,13 +99,19 @@ public class DreadlandsChunkGenerator extends ChunkGenerator {
     private synchronized void initNoise(long seed) {
         if (noiseInitialized && this.noiseSeed == seed) return;
         this.noiseSeed = seed;
-        terrainNoise = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(seed)), List.of(-2, 0));
+        // 3 octaves (-2,-1,0) for richer terrain variation between biomes
+        terrainNoise = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(seed)), List.of(-2, -1, 0));
         roughnessNoise = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(seed + 1111L)), List.of(-1, 0));
         detailNoise = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(seed + 2222L)), List.of(-1, 0));
-        ravineNoise = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(seed + 3333L)), List.of(-2, 0));
+        ravineNoise = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(seed + 3333L)), List.of(-2, -1, 0));
         ravineWobble = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(seed + 4444L)), List.of(-1, 0));
         stoneVariation = new PerlinSimplexNoise(new WorldgenRandom(new LegacyRandomSource(seed + 5555L)), List.of(-1, 0));
         noiseInitialized = true;
+
+        // Propagate seed to the biome source so biome layout is world-dependent
+        if (biomeSource instanceof DreadlandsBiomeSource dbs) {
+            dbs.initSeed(seed);
+        }
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -197,10 +202,20 @@ public class DreadlandsChunkGenerator extends ChunkGenerator {
                                                         ChunkAccess chunk) {
         return CompletableFuture.supplyAsync(() -> {
             DreadlandsBlocks.ensureResolved();
-            initNoise(0L);
+            // noiseSeed is set by withSeed() or setSeed() before generation begins.
+            // If still 0L, terrain still generates — just not seed-unique.
+            if (!noiseInitialized) initNoise(noiseSeed);
             fillTerrain(chunk);
             return chunk;
         }, executor);
+    }
+
+    /**
+     * Called externally (e.g. from a WorldEvent.Load hook) to set the world seed.
+     * Must be called before chunks generate to ensure terrain is seed-dependent.
+     */
+    public void setSeed(long seed) {
+        initNoise(seed);
     }
 
     private void fillTerrain(ChunkAccess chunk) {
@@ -257,19 +272,21 @@ public class DreadlandsChunkGenerator extends ChunkGenerator {
     //  DECORATION — delegates to DreadlandsDecorator
     // ═══════════════════════════════════════════════════════════════════════
 
-    public void applyBiomeDecoration(WorldGenRegion level, ChunkAccess chunk,
+    @Override
+    public void applyBiomeDecoration(WorldGenLevel level, ChunkAccess chunk,
                                      StructureFeatureManager structureManager) {
+        if (!(level instanceof WorldGenRegion region)) return;
         DreadlandsBlocks.ensureResolved();
-        initNoise(level.getSeed());
+        initNoise(region.getSeed());
 
         int cx = chunk.getPos().getMinBlockX(), cz = chunk.getPos().getMinBlockZ();
-        Random rand = new Random(chunk.getPos().toLong() ^ level.getSeed());
+        Random rand = new Random(chunk.getPos().toLong() ^ region.getSeed());
 
         Holder<Biome> bh = biomeSource.getNoiseBiome((cx + 8) >> 2, 64 >> 2, (cz + 8) >> 2, climateSampler());
         DreadBiome biome = DreadBiome.classify(bh);
         DreadBiome.TerrainProfile profile = biome.profile();
 
-        DreadlandsDecorator.decorate(level, cx, cz, biome, rand,
+        DreadlandsDecorator.decorate(region, cx, cz, biome, rand,
                 (x, z) -> getSurfaceHeight(x, z, profile),
                 (x, z) -> getRavineDepth(x, z, profile));
     }
@@ -278,14 +295,14 @@ public class DreadlandsChunkGenerator extends ChunkGenerator {
 
     @Override
     public int getBaseHeight(int x, int z, Heightmap.Types type, LevelHeightAccessor level) {
-        initNoise(0L);
+        if (!noiseInitialized) initNoise(noiseSeed);
         return getSurfaceHeight(x, z, DreadBiome.WASTES.profile()) + 1;
     }
 
     @Override
     public NoiseColumn getBaseColumn(int x, int z, LevelHeightAccessor level) {
         DreadlandsBlocks.ensureResolved();
-        initNoise(0L);
+        if (!noiseInitialized) initNoise(noiseSeed);
         int surfY = getSurfaceHeight(x, z, DreadBiome.WASTES.profile());
         BlockState[] states = new BlockState[level.getHeight()];
         for (int i = 0; i < states.length; i++) {
@@ -302,7 +319,7 @@ public class DreadlandsChunkGenerator extends ChunkGenerator {
 
     @Override
     public void addDebugScreenInfo(List<String> info, BlockPos pos) {
-        initNoise(0L);
+        if (!noiseInitialized) initNoise(noiseSeed);
         Holder<Biome> bh = biomeSource.getNoiseBiome(pos.getX() >> 2, pos.getY() >> 2, pos.getZ() >> 2, climateSampler());
         DreadBiome biome = DreadBiome.classify(bh);
         DreadBiome.TerrainProfile p = biome.profile();
